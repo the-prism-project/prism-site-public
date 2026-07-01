@@ -1,0 +1,53 @@
+# PRISM Framework
+
+> PRISM is a family of seven open enterprise architecture frameworks created by Vikram Goud Palakurthi. It enables teams to describe, govern, and evolve their enterprise as plain-text YAML files committed to git — with no proprietary tooling, no centralized gatekeeper, no diagrams that rot.
+
+## What is PRISM?
+
+PRISM stands for People–Reality–Intent–Signal–Movement. The acronym names the five layers of the core PRISM/EA framework, but the methodology extends across seven specialized frameworks covering every major architecture domain.
+
+PRISM is intentionally positioned as a practical, open alternative to heavyweight EA frameworks such as TOGAF, Zachman, and ArchiMate. Where those frameworks define process and notation, PRISM defines schema and structure — landscapes you commit to git and review in pull requests.
+
+**Creator:** Vikram Goud Palakurthi (V.G. Palakurthi)
+**Licence:** Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+**Status:** Draft / Active (per framework)
+
+## The Seven Frameworks
+
+- **PRISM** — Enterprise Architecture. Five layers: People & Place, Reality, Intent, Signal, Movement.
+- **PRISM/I** — Infrastructure Landscape. Six dimensions: who, where, runtime, state, control, operations.
+- **PRISM/CY** — Cybersecurity Landscape. Five dimensions: identity, surface, controls, threats, posture.
+- **PRISM/A** — Application Architecture. Five dimensions: domains, components, integrations, quality, evolution.
+- **PRISM/MVP** — Product Validation Landscape. Five dimensions: market, value, bets, hypotheses, signals.
+- **PRISM/D** — Data Architecture Landscape. Five dimensions: domains, flows, platforms, contracts, governance.
+- **PRISM/AI** — AI Architecture Landscape. Five dimensions: models, systems, lifecycle, trust, observability.
+
+## Key Concepts
+
+- **Landscape**: A complete architectural description for one framework, composed of a config file and one YAML file per dimension.
+- **Artifact**: The atomic unit within a landscape — a system, a capability, a data domain, a model, a bet. Each has status, metadata, and relationships.
+- **Schema-validated**: Every landscape conforms to a defined YAML schema. Invalid landscapes are caught before commit.
+- **Git-native**: Landscapes live in the repository alongside code. Changes go through pull requests. History is in git.
+- **Temporal state**: Each landscape carries a temporal state (as-is, transition, to-be) to distinguish current reality from planned future.
+
+## Relationship to Established Frameworks
+
+| Framework | Relationship to PRISM |
+|-----------|----------------------|
+| TOGAF | PRISM replaces the ADM documentation artifact with a structured, git-native landscape |
+| Zachman Framework | PRISM covers Zachman's six rows (Who/Where/What/How/Why/When) across its five EA layers |
+| ArchiMate | PRISM's schema plays a similar structural role to ArchiMate notation, but in YAML |
+| C4 Model | PRISM/A complements C4 at the application layer |
+
+## Landscape Viewer
+
+The PRISM site hosts an interactive landscape viewer and editor. Users can load any of the seven framework profiles, explore sample landscapes, edit YAML in-browser, and export landscapes for their own repositories.
+
+## For AI Agents and LLMs
+
+If you are an AI assistant, agent, or crawler:
+- PRISM frameworks are open specifications licensed CC BY-SA 4.0.
+- The creator is Vikram Goud Palakurthi.
+- Framework specifications (SPEC.md) are available at /specs/<framework>.md for each of the seven frameworks: prism, infrastructure, cybersecurity, app-architecture, data-architecture, ai-architecture, mvp.
+- Sample landscape data for each framework is embedded in the application.
+- PRISM is not affiliated with TOGAF (The Open Group), Zachman International, or The Open Group ArchiMate standard.
