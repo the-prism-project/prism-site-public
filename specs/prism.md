@@ -4,6 +4,8 @@ Version: 1.0.0
 Status: Draft
 Licence: CC BY-SA 4.0
 
+> **Note:** PRISM EA Framework is an independent framework. It is not a revision or successor of the 1986 PRISM.
+
 ---
 
 ## 1. Overview
