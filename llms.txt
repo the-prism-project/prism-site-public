@@ -12,6 +12,14 @@ PRISM is intentionally positioned as a practical, open alternative to heavyweigh
 **Licence:** Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 **Status:** Draft / Active (per framework)
 
+## Paper
+
+Palakurthi, V.G. (2025). *PRISM: Enterprise architecture frameworks for the source-first era.*
+
+- PDF: https://prism-framework.org/PRISM_Framework_V1.0.pdf
+- SSRN: https://ssrn.com/abstract=7037719
+- Zenodo (DOI): https://doi.org/10.5281/zenodo.21325668
+
 ## The Seven Frameworks
 
 - **PRISM** — Enterprise Architecture. Five layers: People & Place, Reality, Intent, Signal, Movement.
