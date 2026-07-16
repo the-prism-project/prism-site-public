@@ -379,3 +379,12 @@ PRISM/AI recognizes five categories of AI-specific architectural risk not found 
 | **Explainability** | The degree to which an AI system's decisions can be understood and explained to affected users |
 | **lifecycle_stage** | The current stage of a model's operational lifecycle: `research → training → evaluation → staging → production → deprecated → retired` |
 | **Blast radius (AI)** | The set of systems, evaluations, and monitoring jobs at risk if a model changes, degrades, or fails |
+
+## Paper
+
+Palakurthi, V.G. (2025). *PRISM: Enterprise architecture frameworks for the source-first era.*
+
+- Site: https://prism-framework.org/
+- PDF: https://prism-framework.org/PRISM_Framework_V1.0.pdf
+- SSRN: https://ssrn.com/abstract=7037719
+- Zenodo (DOI): https://doi.org/10.5281/zenodo.21325668

@@ -329,3 +329,12 @@ Components and integrations use `depends_on` to declare runtime dependencies. Th
 - **API implementation.** PRISM/A records that an API exists and what integration contract it uses; the OpenAPI spec lives in your API gateway or schema registry.
 - **Runbook content.** PRISM/A records that a runbook *exists* as a quality artifact; the runbook lives in your docs system.
 - **Real-time health data.** PRISM/A is a landscape description, not a live dashboard. For live SLO tracking, use your observability platform.
+
+## Paper
+
+Palakurthi, V.G. (2025). *PRISM: Enterprise architecture frameworks for the source-first era.*
+
+- Site: https://prism-framework.org/
+- PDF: https://prism-framework.org/PRISM_Framework_V1.0.pdf
+- SSRN: https://ssrn.com/abstract=7037719
+- Zenodo (DOI): https://doi.org/10.5281/zenodo.21325668

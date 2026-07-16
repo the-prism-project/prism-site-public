@@ -737,3 +737,12 @@ SPII is a subset of PII. An artifact with `data_sensitivity: [spii]` implicitly 
 | `compliance_frameworks` | Which regulatory regimes formally apply, and what is their certification status? |
 
 `data_sensitivity: [pii]` is the signal that GDPR-class privacy law applies. `compliance_frameworks` is how you track whether you're certified. The two are complementary, not duplicative.
+
+## Paper
+
+Palakurthi, V.G. (2025). *PRISM: Enterprise architecture frameworks for the source-first era.*
+
+- Site: https://prism-framework.org/
+- PDF: https://prism-framework.org/PRISM_Framework_V1.0.pdf
+- SSRN: https://ssrn.com/abstract=7037719
+- Zenodo (DOI): https://doi.org/10.5281/zenodo.21325668

@@ -349,3 +349,12 @@ threats:
 - **Penetration test methodology.** PRISM/CY models your understanding of the surface; it doesn't enumerate all possible exploit paths.
 - **Security event data.** PRISM/CY records that a SIEM exists and what it covers; the actual alerts live in your SIEM.
 - **Detailed access policies.** PRISM/CY captures the *shape* of IAM (which roles exist, what access level, whether MFA-enforced); specific policy JSON/YAML lives in your IaC repo.
+
+## Paper
+
+Palakurthi, V.G. (2025). *PRISM: Enterprise architecture frameworks for the source-first era.*
+
+- Site: https://prism-framework.org/
+- PDF: https://prism-framework.org/PRISM_Framework_V1.0.pdf
+- SSRN: https://ssrn.com/abstract=7037719
+- Zenodo (DOI): https://doi.org/10.5281/zenodo.21325668

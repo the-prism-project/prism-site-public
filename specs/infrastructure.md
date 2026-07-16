@@ -362,3 +362,12 @@ PRISM/I landscapes validate against JSON Schemas in `schemas/`.
 - **Cost management** — cloud billing, reserved instance tracking, chargeback. PRISM/I captures artifact ownership (which enables cost attribution) but is not a cost tool.
 - **Runbook content** — PRISM/I records that a runbook *exists* as an artifact. The runbook itself lives in your wiki or docs system.
 - **Real-time state** — PRISM/I is a landscape description, not a live inventory. It describes what *should* be true as of `as_of`. For live state, use your cloud provider's asset inventory or a CMDB.
+
+## Paper
+
+Palakurthi, V.G. (2025). *PRISM: Enterprise architecture frameworks for the source-first era.*
+
+- Site: https://prism-framework.org/
+- PDF: https://prism-framework.org/PRISM_Framework_V1.0.pdf
+- SSRN: https://ssrn.com/abstract=7037719
+- Zenodo (DOI): https://doi.org/10.5281/zenodo.21325668

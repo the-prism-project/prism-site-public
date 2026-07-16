@@ -557,3 +557,12 @@ These assumptions use `assumption_type: ai-behavior` and should carry `risk_leve
 | **Blast radius** | The set of bets that become at risk when a critical assumption is invalidated |
 | **Validation state** | The lifecycle state of a hypothesis: unvalidated, in-progress, validated, or invalidated |
 | **Assumption type** | The category of an assumption: desirability, viability, feasibility, usability, or ai-behavior |
+
+## Paper
+
+Palakurthi, V.G. (2025). *PRISM: Enterprise architecture frameworks for the source-first era.*
+
+- Site: https://prism-framework.org/
+- PDF: https://prism-framework.org/PRISM_Framework_V1.0.pdf
+- SSRN: https://ssrn.com/abstract=7037719
+- Zenodo (DOI): https://doi.org/10.5281/zenodo.21325668

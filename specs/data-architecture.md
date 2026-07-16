@@ -374,3 +374,12 @@ All four sensitivity tiers are first-class in PRISM/D:
 | **Data mesh** | An organizational and architectural paradigm where domain teams own and serve their data as products |
 | **Contract state** | The current enforcement status of a data contract: `draft → proposed → agreed → enforced` (or `breached` / `retired`) |
 | **Blast radius** | The set of downstream artifacts that are impacted by a change to or failure of an upstream artifact |
+
+## Paper
+
+Palakurthi, V.G. (2025). *PRISM: Enterprise architecture frameworks for the source-first era.*
+
+- Site: https://prism-framework.org/
+- PDF: https://prism-framework.org/PRISM_Framework_V1.0.pdf
+- SSRN: https://ssrn.com/abstract=7037719
+- Zenodo (DOI): https://doi.org/10.5281/zenodo.21325668
