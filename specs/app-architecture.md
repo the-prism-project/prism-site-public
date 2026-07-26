@@ -332,7 +332,7 @@ Components and integrations use `depends_on` to declare runtime dependencies. Th
 
 ## Paper
 
-Palakurthi, V.G. (2025). *PRISM: Enterprise architecture frameworks for the source-first era.*
+Palakurthi, V.G. (2026). *PRISM: Enterprise architecture frameworks for the source-first era.*
 
 - Site: https://prism-framework.org/
 - PDF: https://prism-framework.org/PRISM_Framework_V1.0.pdf
