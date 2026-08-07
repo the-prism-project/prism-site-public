@@ -11,37 +11,37 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://prism-framework.org/specs/prism.md</loc>
+    <loc>https://prism-framework.org/specs/prism/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://prism-framework.org/specs/infrastructure.md</loc>
+    <loc>https://prism-framework.org/specs/infrastructure/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://prism-framework.org/specs/cybersecurity.md</loc>
+    <loc>https://prism-framework.org/specs/cybersecurity/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://prism-framework.org/specs/app-architecture.md</loc>
+    <loc>https://prism-framework.org/specs/app-architecture/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://prism-framework.org/specs/data-architecture.md</loc>
+    <loc>https://prism-framework.org/specs/data-architecture/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://prism-framework.org/specs/ai-architecture.md</loc>
+    <loc>https://prism-framework.org/specs/ai-architecture/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://prism-framework.org/specs/mvp.md</loc>
+    <loc>https://prism-framework.org/specs/mvp/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

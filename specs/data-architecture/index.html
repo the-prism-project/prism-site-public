@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PRISM/D — Data Architecture Spec | PRISM Framework</title>
+<meta name="description" content="Data domains, flows, contracts, platforms, and governance — in one landscape.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://prism-framework.org/specs/data-architecture/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PRISM/D — Data Architecture Spec | PRISM Framework">
+<meta property="og:description" content="Data domains, flows, contracts, platforms, and governance — in one landscape.">
+<meta property="og:url" content="https://prism-framework.org/specs/data-architecture/">
+<link rel="alternate" type="text/markdown" href="https://prism-framework.org/specs/data-architecture.md">
+<style>
+  :root { color-scheme: light; }
+  body { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.6; color: #073642; background: #fdf6e3; }
+  a { color: #268bd2; }
+  nav { margin-bottom: 2rem; font-size: 0.9rem; }
+  nav a { text-decoration: none; }
+  h1, h2, h3, h4 { color: #002b36; line-height: 1.3; }
+  pre { background: #eee8d5; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }
+  code { background: #eee8d5; padding: 0.15em 0.4em; border-radius: 0.25rem; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border-bottom: 1px solid #93a1a1; padding: 0.5em 0.75em; text-align: left; }
+  blockquote { border-left: 3px solid #93a1a1; margin-left: 0; padding-left: 1rem; color: #586e75; }
+</style>
+</head>
+<body>
+<nav><a href="https://prism-framework.org/">&larr; PRISM</a></nav>
+<p><a href="https://prism-framework.org/specs/data-architecture.md">View raw markdown</a></p>
+<h1>PRISM/D — Data Architecture Landscape Framework</h1>
+<blockquote>
+<p><strong>Version:</strong> 1.0<br><strong>Status:</strong> Active<br><strong>Licence:</strong> CC BY-SA 4.0<br><strong>Family:</strong> PRISM Frameworks</p>
+</blockquote>
+<hr>
+<h2>§ 1 Overview</h2>
+<p>Most organizations have data catalogs, governance policies, quality tools, and lineage diagrams — all in separate systems, all out of sync. PRISM/D is not another catalog. It&#39;s a <strong>landscape view of your data architecture</strong>: who owns what data, how it moves, where it lives, what governs it, and how those pieces connect.</p>
+<p>PRISM/D treats data architecture the way PRISM treats enterprise architecture: as a living landscape committed to git, with explicit ownership, cross-cutting blast radius, and no orphaned artifacts.</p>
+<h3>What PRISM/D replaces (and what it doesn&#39;t)</h3>
+<table>
+<thead>
+<tr>
+<th>Framework / Tool</th>
+<th>What it does</th>
+<th>Where it falls short</th>
+<th>PRISM/D stance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DAMA-DMBOK</td>
+<td>Comprehensive data governance process framework</td>
+<td>Committee-centric, heavy, not git-native, no landscape view</td>
+<td>Different concern — DAMA defines process, PRISM/D maps architecture</td>
+</tr>
+<tr>
+<td>Data Catalogs (Collibra, Alation)</td>
+<td>Metadata discovery and search</td>
+<td>Tooling-centric, not an architecture document, expensive, requires data crawling</td>
+<td>Complementary — catalog for discovery, PRISM/D for design and architecture decisions</td>
+</tr>
+<tr>
+<td>Data Mesh</td>
+<td>Domain ownership principles</td>
+<td>Principles only, no standard for mapping or documenting the mesh</td>
+<td>PRISM/D is the mapping standard for a data mesh architecture</td>
+</tr>
+<tr>
+<td>Great Expectations / dbt</td>
+<td>Data quality enforcement, transformation</td>
+<td>Implementation-level, not architecture-level</td>
+<td>Data contracts in PRISM/D reference these tools; they don&#39;t replace each other</td>
+</tr>
+<tr>
+<td>PRISM (EA)</td>
+<td>Enterprise architecture landscape</td>
+<td>Treats data as a sub-artifact type — no data domain ownership, pipeline lineage, or governance model</td>
+<td>PRISM/D adds depth the EA view lacks</td>
+</tr>
+<tr>
+<td>PRISM/I</td>
+<td>Infrastructure landscape</td>
+<td>Storage platforms appear as infra; data domains, flows, contracts, governance don&#39;t</td>
+<td>Complementary — PRISM/I shows where data lives physically; PRISM/D shows what data exists and how it&#39;s governed</td>
+</tr>
+</tbody></table>
+<h3>The core assertion</h3>
+<p>Data architecture has exactly five concerns. Every data architecture decision maps to one of them.</p>
+<ol>
+<li><strong>Who owns what data</strong> — without domain ownership, data governance is theater</li>
+<li><strong>How data moves</strong> — pipelines, streams, and syncs are architecture decisions, not plumbing</li>
+<li><strong>Where data lives</strong> — platform choice has cascade effects on cost, compliance, and performance</li>
+<li><strong>What agreements govern exchange</strong> — schemas and SLAs are contracts; contracts have states</li>
+<li><strong>Who can access what, under what rules</strong> — access, retention, PII, lineage: the governance layer</li>
+</ol>
+<p>These five concerns become five dimensions.</p>
+<hr>
+<h2>§ 2 Foundational Principles</h2>
+<h3>Git-native</h3>
+<p>Every PRISM/D landscape lives in a directory committed to source control. Data architecture decisions are first-class code: reviewed, versioned, merged. A schema deprecation, a domain ownership transfer, a new pipeline — all committed, all traceable.</p>
+<h3>Domain ownership as a first-class concept</h3>
+<p>Data Mesh taught the industry that domain ownership matters more than centralized data teams. PRISM/D operationalizes this: every dataset and data product has a declared owning team. Ownership determines SLA accountability, access policy authority, and incident response routing.</p>
+<h3>Data products over raw datasets</h3>
+<p>PRISM/D distinguishes raw datasets from <strong>data products</strong> — intentionally designed, versioned, and served datasets with a declared consumer, schema contract, and SLA. A raw claims dump is a dataset. A curated feature vector served to an AI model is a data product.</p>
+<h3>Lineage as architecture</h3>
+<p>End-to-end lineage — from source domain to pipeline to platform to consumer — is an architecture concern, not a metadata search result. PRISM/D captures lineage as explicit <code>depends_on</code> links, making blast radius traversal possible: change a source schema → see every downstream consumer at risk.</p>
+<h3>PII/SPII/PHI are first-class fields</h3>
+<p>Sensitive data classification isn&#39;t a compliance checkbox bolted on later. <code>data_sensitivity</code>, <code>data_classification</code>, and <code>compliance_frameworks</code> are required fields on any artifact that touches regulated data. The landscape renders them visually.</p>
+<h3>Schema version: &quot;1.0&quot;</h3>
+<hr>
+<h2>§ 3 Five Dimensions — The Why</h2>
+<p>Each dimension answers exactly one question. Together they answer everything about a data architecture.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Dimension</th>
+<th>The one question it answers</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><strong>Domains</strong></td>
+<td>What data exists and who owns it?</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Flows</strong></td>
+<td>How does data move from source to consumer?</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Platforms</strong></td>
+<td>Where is data stored and processed?</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Contracts</strong></td>
+<td>What agreements govern data exchange?</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Governance</strong></td>
+<td>Who can access what, under what rules?</td>
+</tr>
+</tbody></table>
+<p><strong>Why five, not more?</strong></p>
+<p>A sixth dimension always reduces to one of these five. &quot;Data quality&quot; belongs in Contracts (quality rules are contract terms). &quot;Data observability&quot; belongs in Contracts or Governance (breach detection is contract enforcement). &quot;MDM&quot; belongs in Domains (master data is a domain concern). &quot;Reporting&quot; belongs in Flows and Platforms. Every proposed sixth dimension was an artifact type within an existing dimension, not a new dimension.</p>
+<p><strong>Why not fewer?</strong></p>
+<p>Four dimensions loses the distinction between Contracts and Governance — they look similar but aren&#39;t. Contracts define the rules of exchange between producer and consumer. Governance defines who is allowed to exchange at all. Merging them hides accountability.</p>
+<hr>
+<h2>§ 4 Dimensions and Artifact Types</h2>
+<h3>4.1 Domains</h3>
+<p><strong>The question:</strong> What data exists and who owns it?</p>
+<p>Domains define the bounded contexts of data ownership. A domain owns its source data, publishes data products for consumers, and is accountable for the SLAs of its products. This is the Data Mesh ownership model operationalized.</p>
+<table>
+<thead>
+<tr>
+<th>Artifact Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>data_domain</code></td>
+<td>A bounded data ownership context — claims, policy, customer, etc.</td>
+</tr>
+<tr>
+<td><code>data_product</code></td>
+<td>A versioned, intentionally designed dataset served to external consumers</td>
+</tr>
+<tr>
+<td><code>dataset</code></td>
+<td>A raw or intermediate dataset owned by a domain (not served externally)</td>
+</tr>
+</tbody></table>
+<p>Key fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Values</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>owner</code></td>
+<td>Team or domain name</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>domain_type</code></td>
+<td><code>source | derived | aggregate | event</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>data_classification</code></td>
+<td><code>public | internal | confidential | restricted</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>data_sensitivity</code></td>
+<td><code>[pii, spii, phi, pci]</code> (list)</td>
+<td>When applicable</td>
+</tr>
+<tr>
+<td><code>compliance_frameworks</code></td>
+<td><code>[GDPR, CCPA, HIPAA, SOX, PCI-DSS, APRA]</code></td>
+<td>When applicable</td>
+</tr>
+<tr>
+<td><code>depends_on</code></td>
+<td>List of upstream domain/product IDs</td>
+<td>When applicable</td>
+</tr>
+</tbody></table>
+<p><strong>domain_type explained:</strong></p>
+<ul>
+<li><code>source</code> — originates data from a system of record (CRM, claims system, IoT)</li>
+<li><code>derived</code> — computed from one or more source domains (feature store, ML features)</li>
+<li><code>aggregate</code> — combines multiple domains into a unified view (customer 360, MDM)</li>
+<li><code>event</code> — produces event streams rather than stored datasets</li>
+</ul>
+<h3>4.2 Flows</h3>
+<p><strong>The question:</strong> How does data move from source to consumer?</p>
+<p>Flows are the pipelines, event streams, and syncs that move data between domains, platforms, and consumers. They are architecture decisions: frequency, latency SLA, transformation pattern, and failure mode all matter.</p>
+<table>
+<thead>
+<tr>
+<th>Artifact Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>pipeline</code></td>
+<td>Batch or streaming transformation pipeline (Spark, dbt, Flink)</td>
+</tr>
+<tr>
+<td><code>event_stream</code></td>
+<td>Real-time event bus or message queue (Kafka, Kinesis, Pub/Sub)</td>
+</tr>
+<tr>
+<td><code>sync</code></td>
+<td>Direct system-to-system sync or CDC process</td>
+</tr>
+<tr>
+<td><code>data_api</code></td>
+<td>Synchronous data serving API (OLTP-style, REST/GraphQL)</td>
+</tr>
+</tbody></table>
+<p>Key fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Values</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>source</code></td>
+<td>Source domain or system ID</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>destination</code></td>
+<td>Target platform or consumer ID</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>frequency</code></td>
+<td><code>real-time | near-real-time | hourly | daily | weekly | on-demand</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>latency_sla</code></td>
+<td>Human-readable SLA (e.g. <code>&lt;200ms</code>, <code>T+1h</code>, <code>T+24h</code>)</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>transformation_type</code></td>
+<td><code>raw | filtered | aggregated | enriched | normalized | feature-engineered</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>failure_mode</code></td>
+<td>What happens on pipeline failure</td>
+<td>Recommended</td>
+</tr>
+</tbody></table>
+<h3>4.3 Platforms</h3>
+<p><strong>The question:</strong> Where is data stored and processed?</p>
+<p>Platforms are the storage and compute systems that data moves through. Platform choice determines compliance scope, cost model, query capability, and operational complexity.</p>
+<table>
+<thead>
+<tr>
+<th>Artifact Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>data_lake</code></td>
+<td>Object-based raw data storage (S3 + Delta Lake, GCS + Iceberg)</td>
+</tr>
+<tr>
+<td><code>data_warehouse</code></td>
+<td>Columnar analytical store (Snowflake, BigQuery, Redshift)</td>
+</tr>
+<tr>
+<td><code>feature_store</code></td>
+<td>ML feature serving and storage (Feast, Tecton, Vertex Feature Store)</td>
+</tr>
+<tr>
+<td><code>stream_platform</code></td>
+<td>Event streaming infrastructure (Kafka, Kinesis, Pub/Sub)</td>
+</tr>
+<tr>
+<td><code>data_cache</code></td>
+<td>Low-latency serving layer (Redis, Memcached)</td>
+</tr>
+<tr>
+<td><code>lakehouse</code></td>
+<td>Unified lake + warehouse (Databricks Delta, Apache Iceberg on S3)</td>
+</tr>
+</tbody></table>
+<p>Key fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Values</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>technology</code></td>
+<td>Technology name</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>platform_type</code></td>
+<td><code>lake | warehouse | lakehouse | feature_store | stream | cache</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>deployment</code></td>
+<td><code>cloud | on-prem | hybrid | managed-saas</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>managed_by</code></td>
+<td>Team or vendor</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>data_classification_max</code></td>
+<td>Highest classification allowed on this platform</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>compliance_scope</code></td>
+<td>Which compliance regimes this platform is certified for</td>
+<td>When applicable</td>
+</tr>
+</tbody></table>
+<h3>4.4 Contracts</h3>
+<p><strong>The question:</strong> What agreements govern data exchange?</p>
+<p>A contract defines the mutual commitment between a data producer and a data consumer. Schema version, quality thresholds, SLAs, and change management protocol are all contract terms. Contracts have states: a <code>breached</code> contract is an incident, not a footnote.</p>
+<table>
+<thead>
+<tr>
+<th>Artifact Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>data_contract</code></td>
+<td>Formal schema + SLA agreement between producer and consumer</td>
+</tr>
+<tr>
+<td><code>schema_def</code></td>
+<td>Versioned schema definition (standalone, referenced by contracts)</td>
+</tr>
+<tr>
+<td><code>quality_rule</code></td>
+<td>Data quality assertion (completeness, uniqueness, freshness, accuracy)</td>
+</tr>
+<tr>
+<td><code>sla</code></td>
+<td>Service level agreement (freshness, availability, latency)</td>
+</tr>
+</tbody></table>
+<p>Key fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Values</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>producer</code></td>
+<td>Domain or system that produces the data</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>consumer</code></td>
+<td>Team or system consuming the data</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>schema_version</code></td>
+<td>Semantic version string</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>contract_state</code></td>
+<td><code>draft | proposed | agreed | enforced | breached | retired</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>enforcement</code></td>
+<td><code>advisory | enforced | breaking</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>quality_threshold</code></td>
+<td>Human-readable quality requirement</td>
+<td>Recommended</td>
+</tr>
+<tr>
+<td><code>change_protocol</code></td>
+<td>What happens when producer changes the schema</td>
+<td>Recommended</td>
+</tr>
+</tbody></table>
+<p><strong>Contract state lifecycle:</strong></p>
+<pre><code>draft → proposed → agreed → enforced
+                         ↘ breached → (remediate) → enforced
+                                    ↘ retired
+</code></pre>
+<h3>4.5 Governance</h3>
+<p><strong>The question:</strong> Who can access what, under what rules?</p>
+<p>Governance covers the four enforcement mechanisms that protect data: access control, PII/SPII/PHI classification, retention rules, and regulatory compliance obligations. These aren&#39;t policy documents — they&#39;re architecture artifacts that link to specific domains, platforms, and flows.</p>
+<table>
+<thead>
+<tr>
+<th>Artifact Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>pii_register</code></td>
+<td>Inventory of PII fields by domain, with legal basis</td>
+</tr>
+<tr>
+<td><code>spii_register</code></td>
+<td>Inventory of SPII/PHI/PCI fields — elevated risk</td>
+</tr>
+<tr>
+<td><code>access_policy</code></td>
+<td>Who can access which data, under what conditions</td>
+</tr>
+<tr>
+<td><code>retention_rule</code></td>
+<td>How long data is retained, under which regulation</td>
+</tr>
+<tr>
+<td><code>lineage_map</code></td>
+<td>End-to-end data lineage from source to consumer</td>
+</tr>
+<tr>
+<td><code>compliance_control</code></td>
+<td>Specific compliance obligation and its implementation</td>
+</tr>
+</tbody></table>
+<p>Key fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Values</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>data_classification</code></td>
+<td><code>public | internal | confidential | restricted</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>legal_basis</code></td>
+<td><code>consent | legitimate-interest | legal-obligation | contract</code></td>
+<td>For PII</td>
+</tr>
+<tr>
+<td><code>regulation</code></td>
+<td><code>GDPR | CCPA | HIPAA | SOX | PCI-DSS | APRA | state-law</code></td>
+<td>When applicable</td>
+</tr>
+<tr>
+<td><code>retention_period</code></td>
+<td>Duration and trigger (e.g. <code>7 years from claim close</code>)</td>
+<td>For retention rules</td>
+</tr>
+<tr>
+<td><code>audit_required</code></td>
+<td>boolean — whether access must be logged for audit</td>
+<td>When applicable</td>
+</tr>
+<tr>
+<td><code>depends_on</code></td>
+<td>Linked domain or platform IDs</td>
+<td>Yes for lineage maps</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>§ 5 File Structure</h2>
+<pre><code>data-architecture/
+└── examples/
+    └── acme-insurance/
+        ├── .prism-d/
+        │   └── config.yaml          # meta: org, product, temporal_state, as_of
+        ├── domains/
+        │   └── landscape.yaml       # data_domain, data_product artifacts
+        ├── flows/
+        │   └── landscape.yaml       # pipeline, event_stream, sync artifacts
+        ├── platforms/
+        │   └── landscape.yaml       # data_lake, warehouse, feature_store artifacts
+        ├── contracts/
+        │   └── landscape.yaml       # data_contract, sla, quality_rule artifacts
+        └── governance/
+            └── landscape.yaml       # pii_register, access_policy, retention_rule, lineage_map
+</code></pre>
+<h3>config.yaml example</h3>
+<pre><code class="language-yaml">prism_d_version: &quot;1.0&quot;
+organization: &quot;ACME, INC&quot;
+product: &quot;Enterprise Data Architecture&quot;
+domain: multi-domain
+scope: enterprise
+temporal_state: baseline
+as_of: &quot;2025-01-01&quot;
+active_dimensions: [domains, flows, platforms, contracts, governance]
+data_mesh_topology: federated-with-central-platform
+primary_cloud: aws
+</code></pre>
+<hr>
+<h2>§ 6 The Data Governance Loop</h2>
+<p>Data governance isn&#39;t a checkpoint — it&#39;s a continuous loop connecting domains, flows, platforms, and contracts.</p>
+<pre><code>Domain declares ownership
+    ↓
+Pipeline moves data (Flow)
+    ↓
+Data lands on Platform
+    ↓
+Contract governs the exchange
+    ↓
+Governance enforces access, retention, and compliance
+    ↓
+Lineage map proves the chain → audit / incident response
+    ↑
+Schema change → contract version bump → consumers notified
+</code></pre>
+<p><strong>Blast radius in PRISM/D:</strong></p>
+<p>Select a source domain → see every downstream flow, platform, and consumer that depends on it. Select a data contract → see which AI model, BI report, or analytics pipeline breaks if the schema changes. The <code>depends_on</code> field on flows, contracts, and governance artifacts creates the traversable graph.</p>
+<hr>
+<h2>§ 7 Data Product Model</h2>
+<p>PRISM/D distinguishes between <strong>data domains</strong> (ownership units) and <strong>data products</strong> (served outputs). A data product is:</p>
+<ul>
+<li>Intentionally designed for a specific consumer</li>
+<li>Versioned with a schema contract</li>
+<li>Served with a declared SLA</li>
+<li>Owned by a domain team that is accountable for its quality</li>
+</ul>
+<p>This is the Data Mesh data-as-a-product principle made concrete. The data product artifact links:</p>
+<ul>
+<li>Its owning domain</li>
+<li>Its upstream dependencies (source datasets/pipelines)</li>
+<li>Its consumers (downstream models, reports, APIs)</li>
+<li>Its active contract</li>
+</ul>
+<hr>
+<h2>§ 8 Cross-Referencing</h2>
+<p>PRISM/D connects to the broader PRISM framework family:</p>
+<table>
+<thead>
+<tr>
+<th>Cross-reference</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>PRISM (EA)</strong></td>
+<td>Data flows appear as <code>data_contract</code> events in the Signal (S) layer; domains map to capabilities in the Reality (R) layer</td>
+</tr>
+<tr>
+<td><strong>PRISM/I</strong></td>
+<td>Platforms (lakes, warehouses, streams) are the storage artifacts in PRISM/I&#39;s State dimension; PRISM/D owns the data governance of those stores</td>
+</tr>
+<tr>
+<td><strong>PRISM/A</strong></td>
+<td>Application components that produce or consume data link to PRISM/D domains via declared data contracts</td>
+</tr>
+<tr>
+<td><strong>PRISM/AI</strong></td>
+<td>The AI Feature Store domain and feature vector data products link directly to model artifacts in PRISM/AI&#39;s Models dimension</td>
+</tr>
+<tr>
+<td><strong>PRISM/MVP</strong></td>
+<td>Market signals, experiment results, and learning artifacts in PRISM/MVP depend on analytics data products declared in PRISM/D</td>
+</tr>
+</tbody></table>
+<p>Cross-referencing uses soft links — reference the ID of an artifact in the other framework. No circular imports, no tight coupling.</p>
+<hr>
+<h2>§ 9 PII / SPII / PHI Classification</h2>
+<p>All four sensitivity tiers are first-class in PRISM/D:</p>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Definition</th>
+<th>Examples</th>
+<th>Renderer chip</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>pii</code></td>
+<td>Personally identifiable information</td>
+<td>Name, email, address, date of birth, phone</td>
+<td>🔒 PII (blue)</td>
+</tr>
+<tr>
+<td><code>spii</code></td>
+<td>Sensitive PII — elevated risk on exposure</td>
+<td>SSN, financial account numbers, biometrics, government ID</td>
+<td>🔐 SPII (red)</td>
+</tr>
+<tr>
+<td><code>phi</code></td>
+<td>Protected health information (HIPAA)</td>
+<td>Medical records, diagnosis codes, treatment history</td>
+<td>🏥 PHI (green)</td>
+</tr>
+<tr>
+<td><code>pci</code></td>
+<td>Payment card industry data</td>
+<td>Card numbers, CVV, cardholder data</td>
+<td>💳 PCI (amber)</td>
+</tr>
+</tbody></table>
+<p><strong>data_classification</strong> sets the baseline access tier:</p>
+<table>
+<thead>
+<tr>
+<th>Classification</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>public</code></td>
+<td>Freely shareable, no access restrictions</td>
+</tr>
+<tr>
+<td><code>internal</code></td>
+<td>ACME employees only, no NDA required</td>
+</tr>
+<tr>
+<td><code>confidential</code></td>
+<td>Need-to-know basis, NDA or role-based access</td>
+</tr>
+<tr>
+<td><code>restricted</code></td>
+<td>Highest protection — PII/SPII/PHI + regulatory data</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>§ 10 What PRISM/D Does Not Cover</h2>
+<table>
+<thead>
+<tr>
+<th>Excluded concern</th>
+<th>Why</th>
+<th>Where it belongs</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Data quality implementation</td>
+<td>PRISM/D declares quality thresholds in contracts; Great Expectations/dbt enforce them</td>
+<td>Your data quality toolchain</td>
+</tr>
+<tr>
+<td>Data catalog and search</td>
+<td>PRISM/D is a design artifact, not a discovery tool</td>
+<td>Collibra, Atlan, DataHub, or similar</td>
+</tr>
+<tr>
+<td>BI report inventory</td>
+<td>Reports are consumers of data products, not architecture</td>
+<td>BI platform metadata</td>
+</tr>
+<tr>
+<td>ML experiment tracking</td>
+<td>Model training runs and experiment logs</td>
+<td>MLflow, W&amp;B, or PRISM/AI Lifecycle dimension</td>
+</tr>
+<tr>
+<td>Live data monitoring</td>
+<td>PRISM/D references monitoring SLAs; it doesn&#39;t run them</td>
+<td>Observability stack or PRISM/AI Observability dimension</td>
+</tr>
+<tr>
+<td>Database schema migration scripts</td>
+<td>PRISM/D documents schema contracts; migrations are implementation</td>
+<td>Flyway, Alembic, or dbt</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>§ 11 Glossary</h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Data domain</strong></td>
+<td>A bounded context of data ownership, accountable for declared data products and SLAs</td>
+</tr>
+<tr>
+<td><strong>Data product</strong></td>
+<td>A versioned, intentionally designed dataset served to external consumers with a declared schema and SLA</td>
+</tr>
+<tr>
+<td><strong>Data contract</strong></td>
+<td>A formal agreement between a data producer and consumer specifying schema, quality, SLA, and change management</td>
+</tr>
+<tr>
+<td><strong>Feature store</strong></td>
+<td>A storage and serving system for ML model input features, providing point-in-time correctness and low-latency retrieval</td>
+</tr>
+<tr>
+<td><strong>Lakehouse</strong></td>
+<td>A storage architecture combining data lake scale (cheap object storage) with data warehouse query performance (table format like Delta Lake or Iceberg)</td>
+</tr>
+<tr>
+<td><strong>Lineage map</strong></td>
+<td>An end-to-end trace from data origin to consumption, enabling impact analysis and audit compliance</td>
+</tr>
+<tr>
+<td><strong>PII</strong></td>
+<td>Personally identifiable information — data that can identify a natural person</td>
+</tr>
+<tr>
+<td><strong>SPII</strong></td>
+<td>Sensitive PII — PII that carries elevated risk on exposure (SSN, biometrics, financial account numbers)</td>
+</tr>
+<tr>
+<td><strong>PHI</strong></td>
+<td>Protected health information — medical data protected under HIPAA</td>
+</tr>
+<tr>
+<td><strong>Data mesh</strong></td>
+<td>An organizational and architectural paradigm where domain teams own and serve their data as products</td>
+</tr>
+<tr>
+<td><strong>Contract state</strong></td>
+<td>The current enforcement status of a data contract: <code>draft → proposed → agreed → enforced</code> (or <code>breached</code> / <code>retired</code>)</td>
+</tr>
+<tr>
+<td><strong>Blast radius</strong></td>
+<td>The set of downstream artifacts that are impacted by a change to or failure of an upstream artifact</td>
+</tr>
+</tbody></table>
+<h2>Paper</h2>
+<p>Palakurthi, V.G. (2026). <em>PRISM: Enterprise architecture frameworks for the source-first era.</em></p>
+<ul>
+<li>Site: <a href="https://prism-framework.org/">https://prism-framework.org/</a></li>
+<li>PDF: <a href="https://prism-framework.org/PRISM_Framework_V1.0.pdf">https://prism-framework.org/PRISM_Framework_V1.0.pdf</a></li>
+<li>SSRN: <a href="https://ssrn.com/abstract=7037719">https://ssrn.com/abstract=7037719</a></li>
+<li>Zenodo (DOI): <a href="https://doi.org/10.5281/zenodo.21325668">https://doi.org/10.5281/zenodo.21325668</a></li>
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PRISM/AI — AI Architecture Spec | PRISM Framework</title>
+<meta name="description" content="Models, systems, lifecycle, trust controls, and production observability.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://prism-framework.org/specs/ai-architecture/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PRISM/AI — AI Architecture Spec | PRISM Framework">
+<meta property="og:description" content="Models, systems, lifecycle, trust controls, and production observability.">
+<meta property="og:url" content="https://prism-framework.org/specs/ai-architecture/">
+<link rel="alternate" type="text/markdown" href="https://prism-framework.org/specs/ai-architecture.md">
+<style>
+  :root { color-scheme: light; }
+  body { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.6; color: #073642; background: #fdf6e3; }
+  a { color: #268bd2; }
+  nav { margin-bottom: 2rem; font-size: 0.9rem; }
+  nav a { text-decoration: none; }
+  h1, h2, h3, h4 { color: #002b36; line-height: 1.3; }
+  pre { background: #eee8d5; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }
+  code { background: #eee8d5; padding: 0.15em 0.4em; border-radius: 0.25rem; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border-bottom: 1px solid #93a1a1; padding: 0.5em 0.75em; text-align: left; }
+  blockquote { border-left: 3px solid #93a1a1; margin-left: 0; padding-left: 1rem; color: #586e75; }
+</style>
+</head>
+<body>
+<nav><a href="https://prism-framework.org/">&larr; PRISM</a></nav>
+<p><a href="https://prism-framework.org/specs/ai-architecture.md">View raw markdown</a></p>
+<h1>PRISM/AI — AI Architecture Landscape Framework</h1>
+<blockquote>
+<p><strong>Version:</strong> 1.0<br><strong>Status:</strong> Active<br><strong>Licence:</strong> CC BY-SA 4.0<br><strong>Family:</strong> PRISM Frameworks</p>
+</blockquote>
+<hr>
+<h2>§ 1 Overview</h2>
+<p>AI is now in production across every industry. Organizations have models, agents, RAG pipelines, fine-tuned LLMs, and autonomous workflows — often with no consistent architectural view of what exists, how it&#39;s evaluated, whether it&#39;s safe, or what breaks when a model drifts.</p>
+<p>PRISM/AI is a <strong>landscape view of your AI architecture</strong>: every model deployed, every AI-powered system built on those models, how they move through lifecycle stages, what trust controls govern them, and what&#39;s being measured in production. It covers the full stack from foundation model selection to drift detection.</p>
+<p>PRISM/AI is not a training tracker, not a compliance framework, not a model registry. It&#39;s the architectural map that connects all of those — committed to git, designed for cross-team visibility, and linked to PRISM/D for data provenance and PRISM/A for application context.</p>
+<h3>What PRISM/AI replaces (and what it doesn&#39;t)</h3>
+<table>
+<thead>
+<tr>
+<th>Framework / Tool</th>
+<th>What it does</th>
+<th>Where it falls short</th>
+<th>PRISM/AI stance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MLflow / Weights &amp; Biases</td>
+<td>Experiment tracking, model registry, artifact management</td>
+<td>Training-run-centric, no architectural landscape, no trust/safety layer, no system-level view</td>
+<td>Complementary — PRISM/AI&#39;s Lifecycle dimension references these; they don&#39;t replace it</td>
+</tr>
+<tr>
+<td>ISO/IEC 42001</td>
+<td>AI management system standard</td>
+<td>Process/governance framework, not an architecture mapping tool</td>
+<td>Different concern — compliance attestation vs. architecture visibility</td>
+</tr>
+<tr>
+<td>NIST AI RMF</td>
+<td>Risk framework for responsible AI</td>
+<td>Risk taxonomy and process, no landscape view, not git-native</td>
+<td>Risk categories inform PRISM/AI Trust dimension; frameworks are different concerns</td>
+</tr>
+<tr>
+<td>EU AI Act</td>
+<td>Regulatory compliance for AI systems</td>
+<td>Compliance obligations, not architecture documentation</td>
+<td>PRISM/AI maps what EU AI Act requires you to document; they&#39;re complementary</td>
+</tr>
+<tr>
+<td>PRISM/A</td>
+<td>Application architecture landscape</td>
+<td>Treats AI components as <code>system_type: ai-agent</code> — no model lifecycle, no trust controls, no eval suites</td>
+<td>PRISM/AI adds what PRISM/A deliberately leaves out</td>
+</tr>
+<tr>
+<td>PRISM (EA)</td>
+<td>Enterprise architecture</td>
+<td>Has AI systems as capability types; no depth on models, evals, guardrails, observability</td>
+<td>PRISM/AI is the deep dive the EA view references</td>
+</tr>
+</tbody></table>
+<h3>The core assertion</h3>
+<p>AI architecture has exactly five concerns. Every AI architecture decision maps to one of them.</p>
+<ol>
+<li><strong>What models exist</strong> — model inventory, capability, provenance, deployment target</li>
+<li><strong>What systems are built on those models</strong> — the applications, agents, RAG pipelines, copilots</li>
+<li><strong>How models move through lifecycle</strong> — training, evaluation, deployment, monitoring, deprecation</li>
+<li><strong>What trust controls govern AI behavior</strong> — guardrails, bias assessment, alignment, red-team</li>
+<li><strong>What&#39;s being measured in production</strong> — accuracy, latency, drift, override rates, incidents</li>
+</ol>
+<p>These five concerns become five dimensions.</p>
+<hr>
+<h2>§ 2 Foundational Principles</h2>
+<h3>Git-native</h3>
+<p>Every PRISM/AI landscape lives in a directory committed to source control. A new model version, a guardrail update, a red-team finding — all committed, all traceable. AI architecture decisions are first-class code.</p>
+<h3>Models are architecture, not experiments</h3>
+<p>The ML community treats models as experiment outputs. PRISM/AI treats models as <strong>architectural assets</strong>: versioned, with declared dependencies, serving specific systems, governed by trust controls, and observable in production. A model version is as significant an architectural decision as a database schema.</p>
+<h3>Trust is non-negotiable and explicit</h3>
+<p>Every AI system has a trust posture — whether you&#39;ve documented it or not. PRISM/AI makes trust explicit: accuracy thresholds, bias assessments, explainability requirements, human override availability, and red-team findings are first-class artifacts with enforcement states.</p>
+<h3>AI behavior assumption type</h3>
+<p>PRISM/AI recognizes a category of architectural uncertainty that doesn&#39;t exist in traditional software: <strong>AI behavior assumptions</strong> — correctness thresholds, hallucination rates, emergent behavior under distribution shift. These aren&#39;t bugs to fix; they&#39;re statistical properties to monitor. PRISM/AI&#39;s Trust and Observability dimensions provide the vocabulary.</p>
+<h3>Human-in-the-loop as a declared architectural property</h3>
+<p>Whether a human must review AI output before it takes effect is an architectural decision, not an implementation detail. <code>human_in_loop</code> is a first-class field on every AI system artifact. Its presence or absence determines deployment risk class and regulatory scope.</p>
+<h3>Schema version: &quot;1.0&quot;</h3>
+<hr>
+<h2>§ 3 Five Dimensions — The Why</h2>
+<p>Each dimension answers exactly one question. Together they answer everything about an AI architecture.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Dimension</th>
+<th>The one question it answers</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><strong>Models</strong></td>
+<td>What AI models are deployed, and what are they capable of?</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Systems</strong></td>
+<td>What AI-powered applications are built on those models?</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Lifecycle</strong></td>
+<td>How do models train, evaluate, deploy, monitor, and retire?</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Trust</strong></td>
+<td>What controls ensure AI behavior is safe, fair, and aligned?</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Observability</strong></td>
+<td>What is being measured in production, and what has gone wrong?</td>
+</tr>
+</tbody></table>
+<p><strong>Why five, not more?</strong></p>
+<p>&quot;Data&quot; is not a sixth dimension — PRISM/D covers training data, feature stores, and data governance. PRISM/AI&#39;s Models dimension references the data products from PRISM/D. &quot;Security&quot; is not a sixth dimension — AI-specific security concerns (prompt injection, data extraction, adversarial inputs) belong in the Trust dimension and link to PRISM/CY.</p>
+<p>&quot;Cost&quot; is not a sixth dimension — token cost, inference cost, and compute cost are observability signals in the Observability dimension. Adding a Cost dimension would split what is naturally unified monitoring.</p>
+<p><strong>Why not fewer?</strong></p>
+<p>Four dimensions loses the distinction between Trust and Observability — they address fundamentally different concerns. Trust defines the controls that should hold (&quot;SHAP must be shown to every adjudicator&quot;). Observability measures whether they do (&quot;override rate is 44%, target &lt;40%&quot;). Merging them collapses design intent with empirical measurement.</p>
+<hr>
+<h2>§ 4 Dimensions and Artifact Types</h2>
+<h3>4.1 Models</h3>
+<p><strong>The question:</strong> What AI models are deployed, and what are they capable of?</p>
+<p>The Models dimension is the inventory of every AI model — foundation models, fine-tuned variants, custom-trained models, embedding models, and specialized classifiers — that the organization deploys or depends on.</p>
+<table>
+<thead>
+<tr>
+<th>Artifact Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>foundation_model</code></td>
+<td>A pre-trained general-purpose model from a provider (GPT-4o, Claude, Gemini)</td>
+</tr>
+<tr>
+<td><code>fine_tuned_model</code></td>
+<td>A provider model fine-tuned on organization-specific data</td>
+</tr>
+<tr>
+<td><code>custom_model</code></td>
+<td>A model trained from scratch or from open-source base on org data</td>
+</tr>
+<tr>
+<td><code>embedding_model</code></td>
+<td>A model that produces vector representations (text-embedding-3-small, BGE)</td>
+</tr>
+<tr>
+<td><code>classifier</code></td>
+<td>A specialized classification model (sentiment, routing, severity)</td>
+</tr>
+<tr>
+<td><code>explainability_layer</code></td>
+<td>A post-hoc explainability wrapper (SHAP, LIME, integrated gradients)</td>
+</tr>
+</tbody></table>
+<p>Key fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Values</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>model_provider</code></td>
+<td><code>anthropic | openai | google | meta | open-source | proprietary</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>capability_type</code></td>
+<td><code>generation | classification | embedding | reasoning | vision | multimodal | structured-output</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>lifecycle_stage</code></td>
+<td><code>research | training | evaluation | staging | production | deprecated | retired</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>version</code></td>
+<td>Model version string</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>training_data_source</code></td>
+<td>Where training data comes from — links to PRISM/D domain IDs</td>
+<td>Recommended</td>
+</tr>
+<tr>
+<td><code>license</code></td>
+<td>License type (<code>proprietary-api | open-source-permissive | open-source-restricted</code>)</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>ai_model</code></td>
+<td><code>true</code> — signals AI card rendering</td>
+<td>Yes</td>
+</tr>
+</tbody></table>
+<p><strong>lifecycle_stage for models:</strong></p>
+<ul>
+<li><code>research</code> — being explored, not yet in any deployment pipeline</li>
+<li><code>training</code> — actively being trained or fine-tuned</li>
+<li><code>evaluation</code> — in eval suite, not yet deployed</li>
+<li><code>staging</code> — deployed to non-production, acceptance testing</li>
+<li><code>production</code> — live, serving real traffic</li>
+<li><code>deprecated</code> — still running, actively being replaced</li>
+<li><code>retired</code> — decommissioned, no longer running</li>
+</ul>
+<h3>4.2 Systems</h3>
+<p><strong>The question:</strong> What AI-powered applications are built on those models?</p>
+<p>Systems are the applications, services, and workflows that use models to deliver value to users. A single model can power multiple systems. A system can chain multiple models. The key distinction from PRISM/A: Systems in PRISM/AI are AI-centric — they exist to deliver AI capability, not just to use AI as a component.</p>
+<table>
+<thead>
+<tr>
+<th>Artifact Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ai_system</code></td>
+<td>A deployed AI-powered service or application</td>
+</tr>
+<tr>
+<td><code>rag_pipeline</code></td>
+<td>A retrieval-augmented generation pipeline</td>
+</tr>
+<tr>
+<td><code>copilot</code></td>
+<td>A human-facing AI assistant embedded in a product</td>
+</tr>
+<tr>
+<td><code>classifier_service</code></td>
+<td>An API that serves classification decisions at scale</td>
+</tr>
+<tr>
+<td><code>autonomous_workflow</code></td>
+<td>A multi-step workflow with AI decision points and minimal human review</td>
+</tr>
+<tr>
+<td><code>ai_agent</code></td>
+<td>An agent with tool access and autonomous action-taking capability</td>
+</tr>
+</tbody></table>
+<p>Key fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Values</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>primary_model</code></td>
+<td>ID of the primary model artifact</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>architecture_pattern</code></td>
+<td><code>rag | zero-shot | few-shot | fine-tuned | agentic | ensemble | hybrid</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>human_in_loop</code></td>
+<td>boolean — must a human approve output before it takes effect?</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>failure_mode</code></td>
+<td>What happens when the AI system fails or produces low-confidence output</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>lifecycle_stage</code></td>
+<td>Same as Models above</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>depends_on</code></td>
+<td>Model artifact IDs this system uses</td>
+<td>Yes</td>
+</tr>
+</tbody></table>
+<h3>4.3 Lifecycle</h3>
+<p><strong>The question:</strong> How do models train, evaluate, deploy, monitor, and retire?</p>
+<p>Lifecycle covers the operational processes that move models from research to production and eventually to retirement. These are architecture decisions: retraining cadence, evaluation methodology, deployment strategy, and monitoring frequency directly determine model quality and risk.</p>
+<table>
+<thead>
+<tr>
+<th>Artifact Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>training_run</code></td>
+<td>A recurring model training or fine-tuning process</td>
+</tr>
+<tr>
+<td><code>eval_suite</code></td>
+<td>A defined evaluation methodology (benchmarks, holdout tests, backtests)</td>
+</tr>
+<tr>
+<td><code>deployment</code></td>
+<td>The process for deploying model versions to an environment</td>
+</tr>
+<tr>
+<td><code>monitoring_job</code></td>
+<td>A recurring process that checks model health in production</td>
+</tr>
+<tr>
+<td><code>experiment</code></td>
+<td>A time-bounded model experiment (A/B, shadow, canary)</td>
+</tr>
+</tbody></table>
+<p>Key fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Values</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>lifecycle_stage</code></td>
+<td>Which stage of AI lifecycle this artifact manages</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>cadence</code></td>
+<td>Frequency (<code>daily | weekly | monthly | per-release | event-driven</code>)</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>responsible_team</code></td>
+<td>Team accountable for running this process</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>trigger</code></td>
+<td><code>scheduled | event-driven | manual | drift-triggered</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>depends_on</code></td>
+<td>Model or eval suite IDs</td>
+<td>Recommended</td>
+</tr>
+</tbody></table>
+<h3>4.4 Trust</h3>
+<p><strong>The question:</strong> What controls ensure AI behavior is safe, fair, and aligned?</p>
+<p>Trust is the most distinctively AI-native dimension. It covers the controls that constrain, evaluate, and document AI behavior — guardrails, bias assessments, red-team findings, explainability requirements, and alignment controls. Trust artifacts are not optional: every AI system in production must have at least one linked trust artifact.</p>
+<table>
+<thead>
+<tr>
+<th>Artifact Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>guardrail</code></td>
+<td>A hard constraint on model behavior (accuracy threshold, content filter, output schema)</td>
+</tr>
+<tr>
+<td><code>bias_assessment</code></td>
+<td>A documented evaluation of model outputs for demographic or group-level disparities</td>
+</tr>
+<tr>
+<td><code>red_team_finding</code></td>
+<td>A documented vulnerability or adversarial finding from red-teaming</td>
+</tr>
+<tr>
+<td><code>alignment_control</code></td>
+<td>A control that keeps AI behavior within intended boundaries (human override, scope limits)</td>
+</tr>
+<tr>
+<td><code>explainability_config</code></td>
+<td>A declared explainability requirement and how it&#39;s implemented</td>
+</tr>
+</tbody></table>
+<p>Key fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Values</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>trust_type</code></td>
+<td><code>accuracy | alignment | fairness | safety | explainability | privacy</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>enforcement</code></td>
+<td><code>blocking | soft-block | logging | alerting | advisory</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>severity</code></td>
+<td><code>critical | high | medium | low</code> (for red-team findings)</td>
+<td>For red_team_finding</td>
+</tr>
+<tr>
+<td><code>remediation_status</code></td>
+<td><code>open | mitigated | resolved | accepted</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>depends_on</code></td>
+<td>Model or system IDs this control applies to</td>
+<td>Yes</td>
+</tr>
+</tbody></table>
+<p><strong>enforcement levels:</strong></p>
+<ul>
+<li><code>blocking</code> — model or system cannot deploy/operate if this control fails</li>
+<li><code>soft-block</code> — output is flagged and routed for human review</li>
+<li><code>logging</code> — control failure is recorded but does not interrupt flow</li>
+<li><code>alerting</code> — control failure triggers an alert to on-call</li>
+<li><code>advisory</code> — recommended, not enforced</li>
+</ul>
+<h3>4.5 Observability</h3>
+<p><strong>The question:</strong> What is being measured in production, and what has gone wrong?</p>
+<p>AI observability goes beyond traditional SRE monitoring. Model accuracy, token cost, hallucination rate, override frequency, demographic drift, and output distribution are all signals that require purpose-built measurement. Observability artifacts declare what&#39;s being measured, current values, thresholds, and linked incidents.</p>
+<table>
+<thead>
+<tr>
+<th>Artifact Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>eval_metric</code></td>
+<td>A production measurement of model or system quality</td>
+</tr>
+<tr>
+<td><code>drift_detector</code></td>
+<td>A process that compares current model behavior to a reference baseline</td>
+</tr>
+<tr>
+<td><code>alert_rule</code></td>
+<td>A threshold-based alerting rule linked to an eval metric</td>
+</tr>
+<tr>
+<td><code>ai_incident</code></td>
+<td>A documented production incident involving AI behavior</td>
+</tr>
+<tr>
+<td><code>trace_config</code></td>
+<td>A declared tracing or logging configuration for AI request/response chains</td>
+</tr>
+</tbody></table>
+<p>Key fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Values</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>signal_type</code></td>
+<td><code>accuracy | latency | cost | drift | override-rate | hallucination-rate | toxicity | confidence</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>current_value</code></td>
+<td>Current measured value</td>
+<td>Recommended</td>
+</tr>
+<tr>
+<td><code>threshold</code></td>
+<td>Alert or action threshold</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>aggregation</code></td>
+<td><code>real-time | hourly | daily | weekly | per-batch</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>linked_guardrail</code></td>
+<td>Trust guardrail ID this metric enforces</td>
+<td>Recommended</td>
+</tr>
+<tr>
+<td><code>depends_on</code></td>
+<td>Model, system, or eval suite IDs</td>
+<td>Yes</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>§ 5 File Structure</h2>
+<pre><code>ai-architecture/
+└── examples/
+    └── acme-insurance/
+        ├── .prism-ai/
+        │   └── config.yaml          # meta: org, product, temporal_state, as_of
+        ├── models/
+        │   └── landscape.yaml       # foundation_model, custom_model, embedding_model artifacts
+        ├── systems/
+        │   └── landscape.yaml       # ai_system, rag_pipeline, copilot, classifier_service
+        ├── lifecycle/
+        │   └── landscape.yaml       # training_run, eval_suite, deployment, monitoring_job
+        ├── trust/
+        │   └── landscape.yaml       # guardrail, bias_assessment, red_team_finding, alignment_control
+        └── observability/
+            └── landscape.yaml       # eval_metric, drift_detector, alert_rule, ai_incident
+</code></pre>
+<h3>config.yaml example</h3>
+<pre><code class="language-yaml">prism_ai_version: &quot;1.0&quot;
+organization: &quot;ACME, INC&quot;
+product: &quot;AI Claims Triage — Architecture Landscape&quot;
+domain: insurance
+scope: product
+temporal_state: transition
+as_of: &quot;2025-01-01&quot;
+active_dimensions: [models, systems, lifecycle, trust, observability]
+ai_risk_class: high           # EU AI Act risk classification
+human_in_loop_required: true  # all customer-facing decisions require human review
+</code></pre>
+<hr>
+<h2>§ 6 The AI Lifecycle Loop</h2>
+<p>AI systems don&#39;t ship once — they cycle continuously through training, evaluation, deployment, and monitoring.</p>
+<pre><code>Research (model selection / prototyping)
+    ↓
+Training (data → model artifact)
+    ↓
+Evaluation (eval suite → pass/fail against trust guardrails)
+    ↓
+Staging (canary / shadow deployment)
+    ↓
+Production (live serving)
+    ↓
+Monitoring (accuracy, drift, override rate, incidents)
+    ↓
+Drift detected or performance degraded
+    ↓
+Retrain → Evaluation → Staging → Production (loop)
+</code></pre>
+<p>PRISM/AI&#39;s <code>depends_on</code> links connect lifecycle artifacts to the models and systems they manage, making blast radius traversal possible: change a training data source → see every downstream eval suite, deployment, and monitoring job at risk.</p>
+<hr>
+<h2>§ 7 Trust Framework</h2>
+<p>Trust in PRISM/AI is structured across five types, each addressing a different failure mode:</p>
+<table>
+<thead>
+<tr>
+<th>Trust type</th>
+<th>Failure mode addressed</th>
+<th>Example control</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>accuracy</code></td>
+<td>Model predictions are wrong too often</td>
+<td>≥87% accuracy blocks deployment</td>
+</tr>
+<tr>
+<td><code>alignment</code></td>
+<td>Model acts outside intended scope</td>
+<td>Human override always available</td>
+</tr>
+<tr>
+<td><code>fairness</code></td>
+<td>Model outputs differ across demographic groups</td>
+<td>Demographic parity assessment monthly</td>
+</tr>
+<tr>
+<td><code>safety</code></td>
+<td>Model produces harmful, toxic, or dangerous outputs</td>
+<td>Content filter with blocking enforcement</td>
+</tr>
+<tr>
+<td><code>explainability</code></td>
+<td>Model decisions are opaque to affected users</td>
+<td>SHAP mandatory for adjudicator-facing scores</td>
+</tr>
+<tr>
+<td><code>privacy</code></td>
+<td>Model leaks training data or enables re-identification</td>
+<td>PII scrubbing in training + inference</td>
+</tr>
+</tbody></table>
+<p><strong>Risk levels for trust findings:</strong></p>
+<ul>
+<li><code>critical</code> — immediate deployment block or incident escalation</li>
+<li><code>high</code> — requires resolution within current sprint</li>
+<li><code>medium</code> — tracked, scheduled for resolution</li>
+<li><code>low</code> — acknowledged, accepted or deferred</li>
+</ul>
+<hr>
+<h2>§ 8 Cross-Referencing</h2>
+<p>PRISM/AI connects to the broader PRISM framework family:</p>
+<table>
+<thead>
+<tr>
+<th>Cross-reference</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>PRISM (EA)</strong></td>
+<td>AI systems appear as AI capabilities in the Reality (R) layer; strategic AI adoption signals in the Signal (S) layer</td>
+</tr>
+<tr>
+<td><strong>PRISM/D</strong></td>
+<td>Models depend on training data domains and feature store products declared in PRISM/D; link via <code>training_data_source</code> field</td>
+</tr>
+<tr>
+<td><strong>PRISM/I</strong></td>
+<td>Model serving infrastructure (GPU clusters, inference endpoints) is declared in PRISM/I&#39;s Runtime and Control dimensions</td>
+</tr>
+<tr>
+<td><strong>PRISM/A</strong></td>
+<td>Application components that embed AI use <code>system_type: ai-agent</code>; they link to PRISM/AI system artifacts for full depth</td>
+</tr>
+<tr>
+<td><strong>PRISM/CY</strong></td>
+<td>AI security threats (prompt injection, data extraction, adversarial inputs) link to threat artifacts in PRISM/CY</td>
+</tr>
+<tr>
+<td><strong>PRISM/MVP</strong></td>
+<td>AI-behavior assumptions in PRISM/MVP hypotheses link to trust guardrails in PRISM/AI for validation evidence</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>§ 9 AI-Native Risk Classification</h2>
+<p>PRISM/AI recognizes five categories of AI-specific architectural risk not found in traditional software:</p>
+<table>
+<thead>
+<tr>
+<th>Risk category</th>
+<th>Description</th>
+<th>Mitigation approach</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Model drift</strong></td>
+<td>Distribution shift between training data and production inputs degrades accuracy over time</td>
+<td>Drift detector in Observability + scheduled retraining in Lifecycle</td>
+</tr>
+<tr>
+<td><strong>Hallucination</strong></td>
+<td>Generative models produce confident but factually incorrect outputs</td>
+<td>Confidence thresholds, retrieval grounding (RAG), HITL for high-stakes outputs</td>
+</tr>
+<tr>
+<td><strong>Demographic bias</strong></td>
+<td>Model outcomes differ unfairly across demographic groups</td>
+<td>Bias assessments in Trust + disaggregated eval metrics in Observability</td>
+</tr>
+<tr>
+<td><strong>Adversarial input</strong></td>
+<td>Crafted inputs manipulate model behavior (prompt injection, evasion attacks)</td>
+<td>Red-team findings in Trust + input sanitization controls</td>
+</tr>
+<tr>
+<td><strong>Training data leakage</strong></td>
+<td>Model memorizes and outputs training data containing PII/SPII</td>
+<td>Privacy trust controls + data minimization in PRISM/D governance</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>§ 10 What PRISM/AI Does Not Cover</h2>
+<table>
+<thead>
+<tr>
+<th>Excluded concern</th>
+<th>Why</th>
+<th>Where it belongs</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Training data management and governance</td>
+<td>Covered by PRISM/D — data domains, contracts, and governance</td>
+<td>PRISM/D</td>
+</tr>
+<tr>
+<td>Experiment tracking and hyperparameter search</td>
+<td>Run-level tracking belongs in tooling</td>
+<td>MLflow, W&amp;B, Comet</td>
+</tr>
+<tr>
+<td>Model weight storage and artifact versioning</td>
+<td>Implementation detail</td>
+<td>MLflow Model Registry, Hugging Face, S3 + DVC</td>
+</tr>
+<tr>
+<td>Prompt library management</td>
+<td>Prompt engineering is operational, not architecture</td>
+<td>Prompt management tools</td>
+</tr>
+<tr>
+<td>AI product strategy and roadmap</td>
+<td>Product decisions belong in PRISM/MVP</td>
+<td>PRISM/MVP Bets and Hypotheses dimensions</td>
+</tr>
+<tr>
+<td>Cloud infrastructure for AI compute</td>
+<td>Declared in PRISM/I</td>
+<td>PRISM/I Runtime dimension</td>
+</tr>
+<tr>
+<td>Application integration patterns</td>
+<td>AI component integration belongs in PRISM/A</td>
+<td>PRISM/A Integrations dimension</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>§ 11 Glossary</h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Foundation model</strong></td>
+<td>A large pre-trained model from a provider, used as-is or fine-tuned (GPT-4o, Claude Sonnet, Gemini Pro)</td>
+</tr>
+<tr>
+<td><strong>Fine-tuned model</strong></td>
+<td>A foundation model further trained on organization-specific data to improve performance on a target task</td>
+</tr>
+<tr>
+<td><strong>RAG (Retrieval-Augmented Generation)</strong></td>
+<td>An architecture pattern that grounds LLM outputs in retrieved documents or knowledge bases to reduce hallucination</td>
+</tr>
+<tr>
+<td><strong>Guardrail</strong></td>
+<td>A hard or soft constraint on AI behavior with a declared enforcement level (blocking/logging/alerting)</td>
+</tr>
+<tr>
+<td><strong>Human-in-the-loop (HITL)</strong></td>
+<td>An architectural pattern where a human must review or approve AI output before it takes effect</td>
+</tr>
+<tr>
+<td><strong>Model drift</strong></td>
+<td>Statistical shift between the distribution of inputs seen during training and inputs seen in production</td>
+</tr>
+<tr>
+<td><strong>Bias assessment</strong></td>
+<td>An evaluation of model outputs across demographic or categorical groups to detect unfair disparities</td>
+</tr>
+<tr>
+<td><strong>Red-team finding</strong></td>
+<td>A documented vulnerability discovered by intentionally adversarial testing of an AI system</td>
+</tr>
+<tr>
+<td><strong>Alignment control</strong></td>
+<td>A control that keeps AI behavior within intended scope and values (human override, scope restrictions, refusal rules)</td>
+</tr>
+<tr>
+<td><strong>Explainability</strong></td>
+<td>The degree to which an AI system&#39;s decisions can be understood and explained to affected users</td>
+</tr>
+<tr>
+<td><strong>lifecycle_stage</strong></td>
+<td>The current stage of a model&#39;s operational lifecycle: <code>research → training → evaluation → staging → production → deprecated → retired</code></td>
+</tr>
+<tr>
+<td><strong>Blast radius (AI)</strong></td>
+<td>The set of systems, evaluations, and monitoring jobs at risk if a model changes, degrades, or fails</td>
+</tr>
+</tbody></table>
+<h2>Paper</h2>
+<p>Palakurthi, V.G. (2026). <em>PRISM: Enterprise architecture frameworks for the source-first era.</em></p>
+<ul>
+<li>Site: <a href="https://prism-framework.org/">https://prism-framework.org/</a></li>
+<li>PDF: <a href="https://prism-framework.org/PRISM_Framework_V1.0.pdf">https://prism-framework.org/PRISM_Framework_V1.0.pdf</a></li>
+<li>SSRN: <a href="https://ssrn.com/abstract=7037719">https://ssrn.com/abstract=7037719</a></li>
+<li>Zenodo (DOI): <a href="https://doi.org/10.5281/zenodo.21325668">https://doi.org/10.5281/zenodo.21325668</a></li>
+</ul>
+
+</body>
+</html>

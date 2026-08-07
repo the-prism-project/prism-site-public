@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PRISM/A — Application Architecture Spec | PRISM Framework</title>
+<meta name="description" content="Bounded contexts, components, quality, and the full evolution arc.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://prism-framework.org/specs/app-architecture/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PRISM/A — Application Architecture Spec | PRISM Framework">
+<meta property="og:description" content="Bounded contexts, components, quality, and the full evolution arc.">
+<meta property="og:url" content="https://prism-framework.org/specs/app-architecture/">
+<link rel="alternate" type="text/markdown" href="https://prism-framework.org/specs/app-architecture.md">
+<style>
+  :root { color-scheme: light; }
+  body { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.6; color: #073642; background: #fdf6e3; }
+  a { color: #268bd2; }
+  nav { margin-bottom: 2rem; font-size: 0.9rem; }
+  nav a { text-decoration: none; }
+  h1, h2, h3, h4 { color: #002b36; line-height: 1.3; }
+  pre { background: #eee8d5; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }
+  code { background: #eee8d5; padding: 0.15em 0.4em; border-radius: 0.25rem; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border-bottom: 1px solid #93a1a1; padding: 0.5em 0.75em; text-align: left; }
+  blockquote { border-left: 3px solid #93a1a1; margin-left: 0; padding-left: 1rem; color: #586e75; }
+</style>
+</head>
+<body>
+<nav><a href="https://prism-framework.org/">&larr; PRISM</a></nav>
+<p><a href="https://prism-framework.org/specs/app-architecture.md">View raw markdown</a></p>
+<h1>PRISM/A — Application Architecture Framework</h1>
+<p>Version: 1.0.0
+Status: Draft
+Licence: CC BY-SA 4.0</p>
+<hr>
+<h2>1. Overview</h2>
+<p>PRISM/A is a framework for describing, governing, and evolving an organization&#39;s application architecture as a landscape. It answers the question: <em>what applications exist, how are they structured, how do they relate to each other, how healthy are they, and where are they going?</em></p>
+<p>Existing approaches each cover a subset of this:</p>
+<table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>What it does</th>
+<th>What it misses</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>C4 Model</strong></td>
+<td>Diagrams: system context, container, component, code</td>
+<td>Diagram-first; no text model; no temporal state; no quality</td>
+</tr>
+<tr>
+<td><strong>TOGAF Application Layer</strong></td>
+<td>Application inventory and interface mapping</td>
+<td>Heavyweight; no bounded context structure; no AI-native thinking</td>
+</tr>
+<tr>
+<td><strong>Service Catalogs</strong></td>
+<td>Lists what services exist</td>
+<td>No design intent; no quality; no evolution arc</td>
+</tr>
+<tr>
+<td><strong>ADRs</strong></td>
+<td>Captures architectural decisions</td>
+<td>Not connected to the resulting landscape; no cross-referencing</td>
+</tr>
+<tr>
+<td><strong>OpenAPI Specs</strong></td>
+<td>Interface contracts</td>
+<td>Only the interface; nothing about component structure or quality</td>
+</tr>
+</tbody></table>
+<p>PRISM/A is text-first, git-native, and schema-validated. It models the full application landscape — not just what exists, but the organizational intent behind it, the quality reality of it, and the trajectory it&#39;s following.</p>
+<h3>What makes PRISM/A different</h3>
+<p><strong>Domain-Driven Design as the organizing principle.</strong> PRISM/A treats bounded contexts (domains) as the primary architectural unit — not services, not layers, not teams. Services, events, and APIs are described <em>within</em> and <em>between</em> domains. This makes the domain model navigable by architects, product owners, and engineers.</p>
+<p><strong>Quality as a first-class dimension.</strong> Most architecture documentation describes what systems do, not how healthy they are. PRISM/A includes a Quality dimension: test coverage, SLO compliance, technical debt level, reliability, and security posture are architectural artifacts, not metrics-tool outputs.</p>
+<p><strong>AI-native from day one.</strong> AI systems (agents, LLMs, agentic workflows) participate fully in the application landscape. They have domains, components, integration contracts, quality metrics, and evolution plans — just like any other system.</p>
+<p><strong>Evolution instead of future-state documents.</strong> The Evolution dimension replaces separate &quot;future state architecture&quot; documents. ADRs, migration programs, API versioning plans, and deprecation roadmaps all live in the same landscape — connected to the current-state components they affect.</p>
+<h3>Relationship to PRISM EA</h3>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Framework</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Capabilities, systems (high-level), processes, data, signals, intent</td>
+<td>PRISM EA</td>
+</tr>
+<tr>
+<td>Bounded contexts, components, cross-domain integrations, quality, evolution</td>
+<td>PRISM/A</td>
+</tr>
+</tbody></table>
+<p>PRISM EA&#39;s <code>Reality/systems</code> lists what systems exist at a business level. PRISM/A&#39;s <code>Components</code> dimension describes their internal structure, tech stack, and runtime characteristics. They cross-reference by system ID.</p>
+<p>PRISM EA&#39;s <code>Signal/apis</code> and <code>Signal/events</code> list external integration contracts. PRISM/A&#39;s <code>Integrations</code> dimension describes the full cross-domain integration graph — both internal and external.</p>
+<h3>Relationship to PRISM/I (Infrastructure)</h3>
+<p>PRISM/I describes how infrastructure runs. PRISM/A describes what applications run on that infrastructure. Cross-reference PRISM/I runtime artifacts (clusters, services, topics) from PRISM/A components using the <code>prism_i_artifact</code> link field.</p>
+<hr>
+<h2>2. Foundational Principles</h2>
+<p>PRISM/A inherits three principles from PRISM EA.</p>
+<h3>2.1 YAML for Artifacts, JSON for Schemas</h3>
+<p>Application landscapes are authored in YAML. Engineers, architects, and tech leads need to read and write these files without a modeling tool. YAML&#39;s comments, block scalars, and minimal syntax noise make this tractable.</p>
+<h3>2.2 Git-Native Governance</h3>
+<table>
+<thead>
+<tr>
+<th>Git concept</th>
+<th>PRISM/A meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Branch</td>
+<td>Exploration of an architectural option</td>
+</tr>
+<tr>
+<td>Commit</td>
+<td>An architectural decision or refactor</td>
+</tr>
+<tr>
+<td>Pull request</td>
+<td>Architecture review — tech lead, staff engineer, architect</td>
+</tr>
+<tr>
+<td>Tag</td>
+<td>Published architecture baseline</td>
+</tr>
+<tr>
+<td>Diff</td>
+<td>Change impact analysis across the application estate</td>
+</tr>
+<tr>
+<td>History</td>
+<td>Audit trail for architectural decisions</td>
+</tr>
+</tbody></table>
+<p>ADRs in the Evolution dimension reference git commit SHAs — making decisions traceable from the landscape to the exact commit where they were made.</p>
+<h3>2.3 Temporal Axis</h3>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>baseline</code></td>
+<td>The application landscape as it exists today</td>
+</tr>
+<tr>
+<td><code>transition</code></td>
+<td>An intermediate state during a refactor or migration</td>
+</tr>
+<tr>
+<td><code>target</code></td>
+<td>The desired future architecture</td>
+</tr>
+</tbody></table>
+<p>Components being replaced are <code>decommissioning</code>. Planned future components are <code>planned</code>. The landscape describes the full arc from current to target.</p>
+<h3>2.4 Who &amp; Where is Inherited</h3>
+<p>Application ownership and team structure live in PRISM EA&#39;s P layer. PRISM/A does not duplicate stakeholders or geographies. Component ownership references PRISM EA stakeholder IDs.</p>
+<hr>
+<h2>3. The Five Dimensions</h2>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Question</th>
+<th>Scope</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Domains</strong></td>
+<td>What are the logical partitions?</td>
+<td>Bounded contexts and their purpose, ownership, and relationships</td>
+</tr>
+<tr>
+<td><strong>Components</strong></td>
+<td>What are the building blocks?</td>
+<td>Services, APIs, workers, UIs, AI models, adapters within domains</td>
+</tr>
+<tr>
+<td><strong>Integrations</strong></td>
+<td>How do they communicate?</td>
+<td>Cross-domain contracts: synchronous APIs, async events, data contracts</td>
+</tr>
+<tr>
+<td><strong>Quality</strong></td>
+<td>How healthy is the estate?</td>
+<td>Test coverage, SLOs, tech debt, reliability, security posture at app level</td>
+</tr>
+<tr>
+<td><strong>Evolution</strong></td>
+<td>Where is it going?</td>
+<td>ADRs, migration programs, API versioning, deprecation roadmap</td>
+</tr>
+</tbody></table>
+<h3>Why five?</h3>
+<p><strong>Domains precede components</strong> because the domain model is the organizing principle. A service without a domain has no clear ownership, no clear boundary, and no clear evolution path. Naming domains first forces the architectural conversation that most service inventories skip.</p>
+<p><strong>Components are inside domains.</strong> Unlike service catalogs that list everything at the same level, PRISM/A places components within domains. This makes cross-domain coupling immediately visible — when an integration crosses a domain boundary, that&#39;s an explicit architectural decision.</p>
+<p><strong>Integrations stand alone</strong> because cross-domain contracts are the most consequential decisions in application architecture. They outlive the components that implement them. A separate dimension gives them the governance attention they deserve — just as PRISM EA&#39;s Signal layer does for enterprise signals.</p>
+<p><strong>Quality is a dimension, not a metric.</strong> Most architecture documentation is silent on health. By making quality a first-class dimension, PRISM/A forces organizations to describe the quality reality of their estate alongside its functional reality. A component with zero test coverage and critical tech debt is an architectural risk.</p>
+<p><strong>Evolution replaces future-state documents</strong> because separate &quot;to-be architecture&quot; documents go stale immediately. In PRISM/A, the evolution arc lives in the same file as the current state — connected to the components it affects via <code>depends_on</code> references.</p>
+<hr>
+<h2>4. Dimensions — Artifact Types</h2>
+<h3>4.1 Domains</h3>
+<table>
+<thead>
+<tr>
+<th>Artifact type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>domain</code></td>
+<td>A bounded context: a named, cohesive area of the application estate with clear ownership and language</td>
+</tr>
+</tbody></table>
+<p><strong>Key fields on domain artifacts:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>ubiquitous_language</code></td>
+<td>string[] — the key terms and concepts that define this domain</td>
+</tr>
+<tr>
+<td><code>owner_stakeholder_id</code></td>
+<td>Reference to PRISM EA stakeholder who owns this domain</td>
+</tr>
+<tr>
+<td><code>domain_type</code></td>
+<td><code>core</code> | <code>supporting</code> | <code>generic</code> — DDD classification</td>
+</tr>
+<tr>
+<td><code>maturity</code></td>
+<td><code>initial</code> | <code>defined</code> | <code>managed</code> — domain architecture maturity</td>
+</tr>
+</tbody></table>
+<h3>4.2 Components</h3>
+<table>
+<thead>
+<tr>
+<th>Artifact type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>service</code></td>
+<td>Long-running workload: backend API, microservice, BFF (backend-for-frontend)</td>
+</tr>
+<tr>
+<td><code>ui</code></td>
+<td>User interface: web SPA, mobile app, desktop client, microfrontend</td>
+</tr>
+<tr>
+<td><code>worker</code></td>
+<td>Background workload: consumer, job, batch processor</td>
+</tr>
+<tr>
+<td><code>ai_model</code></td>
+<td>AI/ML model or AI agent: deployed model, LLM endpoint, agentic system</td>
+</tr>
+<tr>
+<td><code>adapter</code></td>
+<td>Integration adapter: anti-corruption layer, external system facade</td>
+</tr>
+<tr>
+<td><code>platform</code></td>
+<td>Third-party platform: SaaS product, vendor-managed system</td>
+</tr>
+</tbody></table>
+<p><strong>Key fields on component artifacts:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>domain_id</code></td>
+<td>Which domain this component belongs to</td>
+</tr>
+<tr>
+<td><code>tech_stack</code></td>
+<td>string[] — runtime, language, framework (e.g., [Java 21, Spring Boot, EKS])</td>
+</tr>
+<tr>
+<td><code>system_type</code></td>
+<td><code>ai-agent</code> | <code>llm</code> | <code>agentic-workflow</code> for AI components</td>
+</tr>
+<tr>
+<td><code>trigger_mode</code></td>
+<td><code>event-driven</code> | <code>api-driven</code> | <code>scheduled</code> | <code>continuous</code> | <code>manual</code></td>
+</tr>
+<tr>
+<td><code>prism_ea_system</code></td>
+<td>Reference to PRISM EA system ID</td>
+</tr>
+<tr>
+<td><code>prism_i_artifact</code></td>
+<td>Reference to PRISM/I runtime artifact</td>
+</tr>
+<tr>
+<td><code>data_sensitivity</code></td>
+<td>string[] — data categories this component processes: <code>pii</code> | <code>spii</code> | <code>phi</code> | <code>pci</code></td>
+</tr>
+<tr>
+<td><code>compliance_frameworks</code></td>
+<td>object[] — compliance frameworks applicable. Same structure as PRISM EA §10.3.</td>
+</tr>
+</tbody></table>
+<h3>4.3 Integrations</h3>
+<table>
+<thead>
+<tr>
+<th>Artifact type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>api</code></td>
+<td>Synchronous API contract: REST, GraphQL, gRPC</td>
+</tr>
+<tr>
+<td><code>event</code></td>
+<td>Asynchronous event: Kafka topic, SNS/SQS message, webhook</td>
+</tr>
+<tr>
+<td><code>data_contract</code></td>
+<td>Structured data exchange agreement: batch feed, shared DB table, ETL pipeline</td>
+</tr>
+<tr>
+<td><code>adapter_contract</code></td>
+<td>Contract through an anti-corruption layer (adapter component)</td>
+</tr>
+</tbody></table>
+<p><strong>Key fields on integration artifacts:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>producer_domain</code></td>
+<td>Domain ID producing this integration</td>
+</tr>
+<tr>
+<td><code>consumer_domain</code></td>
+<td>Domain ID consuming this integration</td>
+</tr>
+<tr>
+<td><code>direction</code></td>
+<td><code>inbound</code> | <code>outbound</code> | <code>bidirectional</code></td>
+</tr>
+<tr>
+<td><code>coupling</code></td>
+<td><code>synchronous</code> | <code>asynchronous</code> | <code>batch</code></td>
+</tr>
+<tr>
+<td><code>schema_registry</code></td>
+<td>Whether the event/API schema is registered in a schema registry</td>
+</tr>
+<tr>
+<td><code>versioning</code></td>
+<td><code>none</code> | <code>url-versioned</code> | <code>header-versioned</code> | <code>schema-versioned</code></td>
+</tr>
+<tr>
+<td><code>data_sensitivity</code></td>
+<td>string[] — data categories flowing through this integration: <code>pii</code> | <code>spii</code> | <code>phi</code> | <code>pci</code></td>
+</tr>
+</tbody></table>
+<h3>4.4 Quality</h3>
+<table>
+<thead>
+<tr>
+<th>Artifact type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>quality_metric</code></td>
+<td>Snapshot of a component&#39;s quality: coverage, SLO, debt, reliability</td>
+</tr>
+<tr>
+<td><code>slo</code></td>
+<td>Service level objective: target, current measurement, breach history</td>
+</tr>
+<tr>
+<td><code>tech_debt_record</code></td>
+<td>Documented technical debt item with severity and resolution plan</td>
+</tr>
+</tbody></table>
+<p><strong>Key fields on quality artifacts:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>component_id</code></td>
+<td>Which component this quality artifact describes</td>
+</tr>
+<tr>
+<td><code>test_coverage</code></td>
+<td>Percentage — automated test coverage</td>
+</tr>
+<tr>
+<td><code>tech_debt_level</code></td>
+<td><code>none</code> | <code>low</code> | <code>medium</code> | <code>high</code> | <code>critical</code></td>
+</tr>
+<tr>
+<td><code>reliability</code></td>
+<td><code>high</code> | <code>medium</code> | <code>low</code> — P99 latency and error rate assessment</td>
+</tr>
+<tr>
+<td><code>security_posture</code></td>
+<td><code>strong</code> | <code>moderate</code> | <code>weak</code> — security hygiene of this component</td>
+</tr>
+<tr>
+<td><code>last_assessed</code></td>
+<td>Date of last quality assessment</td>
+</tr>
+</tbody></table>
+<h3>4.5 Evolution</h3>
+<table>
+<thead>
+<tr>
+<th>Artifact type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>decision</code></td>
+<td>Architectural Decision Record (ADR): the decision, rationale, and trade-offs</td>
+</tr>
+<tr>
+<td><code>migration_program</code></td>
+<td>Planned migration or replacement: source → target component, timeline</td>
+</tr>
+<tr>
+<td><code>roadmap_item</code></td>
+<td>Planned new capability or feature: domain, component, expected delivery</td>
+</tr>
+<tr>
+<td><code>deprecation</code></td>
+<td>Deprecation notice for an API, event, or component version</td>
+</tr>
+</tbody></table>
+<p><strong>Key fields on evolution artifacts:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>status</code></td>
+<td><code>active</code> | <code>planned</code> | <code>completed</code> | <code>cancelled</code></td>
+</tr>
+<tr>
+<td><code>target_date</code></td>
+<td>Expected completion or delivery date</td>
+</tr>
+<tr>
+<td><code>decision_date</code></td>
+<td>For ADRs: when the decision was made</td>
+</tr>
+<tr>
+<td><code>git_commit_sha</code></td>
+<td>For ADRs: the commit where this decision was first recorded</td>
+</tr>
+<tr>
+<td><code>replaces</code></td>
+<td>IDs of artifacts this evolution artifact supersedes</td>
+</tr>
+<tr>
+<td><code>superseded_by</code></td>
+<td>ID of the evolution artifact that superseded this one</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>5. File Structure</h2>
+<pre><code>&lt;org-name&gt;/
+  .prism-a/
+    config.yaml             # landscape metadata
+  domains/
+    landscape.yaml
+  components/
+    landscape.yaml
+  integrations/
+    landscape.yaml
+  quality/
+    landscape.yaml
+  evolution/
+    landscape.yaml
+</code></pre>
+<h3><code>.prism-a/config.yaml</code></h3>
+<pre><code class="language-yaml">prism_a_version: &quot;1.0&quot;
+organization: &quot;ACME, INC&quot;
+description: &quot;Application architecture — insurance operations platform&quot;
+domain: insurance
+scope: enterprise
+temporal_state: transition    # billing migration in progress
+as_of: &quot;2025-01-01&quot;
+active_dimensions:
+  - domains
+  - components
+  - integrations
+  - quality
+  - evolution
+tech_governance:
+  schema_registry: true
+  adr_required: true
+  api_review_required: true
+</code></pre>
+<hr>
+<h2>6. Domain Modeling</h2>
+<p>PRISM/A adopts three DDD domain classifications:</p>
+<table>
+<thead>
+<tr>
+<th>Classification</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>core</code></td>
+<td>The business differentiator. What the organization does that competitors can&#39;t easily replicate.</td>
+</tr>
+<tr>
+<td><code>supporting</code></td>
+<td>Enables core domains but is not differentiating. Often a good candidate for SaaS or package software.</td>
+</tr>
+<tr>
+<td><code>generic</code></td>
+<td>Commodity function. Should be bought or built with minimal investment.</td>
+</tr>
+</tbody></table>
+<p>Classification guides investment and build-vs-buy decisions:</p>
+<ul>
+<li><code>core</code> domains get greenfield investment and internal ownership.</li>
+<li><code>supporting</code> domains may use package software with customization.</li>
+<li><code>generic</code> domains should be SaaS-first.</li>
+</ul>
+<pre><code class="language-yaml">- id: dom-claims
+  name: &quot;Claims&quot;
+  type: domain
+  domain_type: core         # claims adjudication is ACME&#39;s differentiator
+  maturity: managed
+
+- id: dom-billing
+  name: &quot;Billing&quot;
+  type: domain
+  domain_type: supporting   # billing is essential but not differentiating
+  maturity: initial         # z/OS migration constrains maturity
+
+- id: dom-auth
+  name: &quot;Authentication&quot;
+  type: domain
+  domain_type: generic      # buy: use Okta
+  maturity: managed
+</code></pre>
+<hr>
+<h2>7. Cross-Referencing</h2>
+<pre><code class="language-yaml">- id: comp-claims-portal
+  type: service
+  links:
+    prism_ea_system: sys-claims-portal    # PRISM EA Reality/systems
+    prism_i_artifact: svc-claims-api      # PRISM/I Runtime/services
+    prism_cy_surface: surf-claims-portal  # PRISM/CY Surface
+</code></pre>
+<hr>
+<h2>8. Dependency Modeling and Blast Radius</h2>
+<p>Components and integrations use <code>depends_on</code> to declare runtime dependencies. This enables:</p>
+<p><strong>Migration blast radius:</strong> When <code>comp-billing-zos</code> is <code>decommissioning</code>, all integrations and components that depend on it are at risk. Selecting the legacy billing component shows every at-risk artifact.</p>
+<p><strong>Evolution blast radius:</strong> When a domain or component has a <code>migration_program</code> depending on it, selecting the artifact shows what programs are planned.</p>
+<pre><code class="language-yaml">- id: int-portal-billing
+  type: api
+  depends_on: [comp-billing-zos]   # at risk — billing z/OS decommissioning
+</code></pre>
+<hr>
+<h2>9. What PRISM/A Does Not Cover</h2>
+<ul>
+<li><strong>Code-level architecture.</strong> PRISM/A describes components and their relationships. Internal code structure, class hierarchies, and module dependencies live in code and tooling (e.g., static analysis, dependency graphs).</li>
+<li><strong>Runtime topology.</strong> PRISM/A records that a component runs on EKS; the actual pod spec lives in PRISM/I or your IaC repo.</li>
+<li><strong>API implementation.</strong> PRISM/A records that an API exists and what integration contract it uses; the OpenAPI spec lives in your API gateway or schema registry.</li>
+<li><strong>Runbook content.</strong> PRISM/A records that a runbook <em>exists</em> as a quality artifact; the runbook lives in your docs system.</li>
+<li><strong>Real-time health data.</strong> PRISM/A is a landscape description, not a live dashboard. For live SLO tracking, use your observability platform.</li>
+</ul>
+<h2>Paper</h2>
+<p>Palakurthi, V.G. (2026). <em>PRISM: Enterprise architecture frameworks for the source-first era.</em></p>
+<ul>
+<li>Site: <a href="https://prism-framework.org/">https://prism-framework.org/</a></li>
+<li>PDF: <a href="https://prism-framework.org/PRISM_Framework_V1.0.pdf">https://prism-framework.org/PRISM_Framework_V1.0.pdf</a></li>
+<li>SSRN: <a href="https://ssrn.com/abstract=7037719">https://ssrn.com/abstract=7037719</a></li>
+<li>Zenodo (DOI): <a href="https://doi.org/10.5281/zenodo.21325668">https://doi.org/10.5281/zenodo.21325668</a></li>
+</ul>
+
+</body>
+</html>
