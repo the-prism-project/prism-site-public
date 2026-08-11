@@ -180,6 +180,8 @@ A landscape in `transition` state documents *both* what exists now and what it i
 | `slo` | Service level objective definition |
 | `chaos` | Chaos engineering tooling: Chaos Monkey, LitmusChaos, Gremlin |
 
+Operations artifacts carry an optional `maturity` field (`initial → developing → defined → managed → optimizing`) rating the operational discipline around that artifact — e.g. how consistently a pipeline enforces gates, or how complete monitoring coverage is — independent of its `status`.
+
 ---
 
 ## 5. File Structure

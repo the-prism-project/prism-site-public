@@ -118,6 +118,7 @@ Key fields:
 | `training_data_source` | Where training data comes from — links to PRISM/D domain IDs | Recommended |
 | `license` | License type (`proprietary-api \| open-source-permissive \| open-source-restricted`) | Yes |
 | `ai_model` | `true` — signals AI card rendering | Yes |
+| `maturity` | `initial \| developing \| defined \| managed \| optimizing` | Optional |
 
 **lifecycle_stage for models:**
 - `research` — being explored, not yet in any deployment pipeline
@@ -127,6 +128,8 @@ Key fields:
 - `production` — live, serving real traffic
 - `deprecated` — still running, actively being replaced
 - `retired` — decommissioned, no longer running
+
+`maturity` is a separate axis from `lifecycle_stage`: lifecycle_stage tracks where the model sits in its deployment pipeline, `maturity` tracks how disciplined the governance around it is (monitoring, retraining cadence, evaluation rigor) — a `production` model can still be `initial` maturity if it ships with no monitoring or retraining process.
 
 ### 4.2 Systems
 

@@ -246,7 +246,7 @@ Licence: CC BY-SA 4.0</p>
 <p>The operational layer. This covers what the enterprise actually has and does, drawing from TOGAF&#39;s architecture domains (business, application, data, technology) without mandating their full scope.</p>
 <p><strong>Sub-dimensions:</strong></p>
 <ul>
-<li><strong>Capabilities</strong> — What the enterprise can do, expressed as business outcomes (e.g., &quot;process insurance claims,&quot; &quot;manufacture automotive components&quot;).</li>
+<li><strong>Capabilities</strong> — What the enterprise can do, expressed as business outcomes (e.g., &quot;process insurance claims,&quot; &quot;manufacture automotive components&quot;). Capabilities carry an optional <code>maturity</code> rating (<code>initial → developing → defined → managed → optimizing</code>) describing how consistently the capability is governed and executed, independent of its <code>status</code>.</li>
 <li><strong>Systems</strong> — The operational units delivering capabilities — applications, machines, teams, processes, services.</li>
 <li><strong>Data</strong> — The core information assets, their owners, classifications, and flow patterns.</li>
 <li><strong>Processes</strong> — How work moves through the enterprise: workflows, procedures, value streams.</li>
@@ -418,7 +418,7 @@ git tag prism/target/2027-q2
 <li>PRISM v1.0 does not prescribe a rendering or visualization standard. Diagrams are out of scope; the text model is the primary artifact.</li>
 <li>Tooling (CLI, dashboard) is roadmap. Current validation relies on third-party JSON Schema validators.</li>
 <li>The Pulse sub-dimension of M requires qualitative input that cannot be schema-validated. PRISM captures the structure; organizations supply the signal.</li>
-<li>PRISM does not currently define a maturity model. Maturity levels are planned for v1.1.</li>
+<li>Maturity rating (<code>initial → optimizing</code>) is currently defined only on <code>capabilities</code> in the Reality layer. It does not yet extend to other artifact types or other layers — that broader coverage is planned for v1.1.</li>
 </ul>
 <hr>
 <h2>9. Glossary</h2>

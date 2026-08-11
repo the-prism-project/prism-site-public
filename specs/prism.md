@@ -174,7 +174,7 @@ The operational layer. This covers what the enterprise actually has and does, dr
 
 **Sub-dimensions:**
 
-- **Capabilities** — What the enterprise can do, expressed as business outcomes (e.g., "process insurance claims," "manufacture automotive components").
+- **Capabilities** — What the enterprise can do, expressed as business outcomes (e.g., "process insurance claims," "manufacture automotive components"). Capabilities carry an optional `maturity` rating (`initial → developing → defined → managed → optimizing`) describing how consistently the capability is governed and executed, independent of its `status`.
 - **Systems** — The operational units delivering capabilities — applications, machines, teams, processes, services.
 - **Data** — The core information assets, their owners, classifications, and flow patterns.
 - **Processes** — How work moves through the enterprise: workflows, procedures, value streams.
@@ -350,7 +350,7 @@ PRISM was designed without assuming IT context. Here's how the layers translate 
 - PRISM v1.0 does not prescribe a rendering or visualization standard. Diagrams are out of scope; the text model is the primary artifact.
 - Tooling (CLI, dashboard) is roadmap. Current validation relies on third-party JSON Schema validators.
 - The Pulse sub-dimension of M requires qualitative input that cannot be schema-validated. PRISM captures the structure; organizations supply the signal.
-- PRISM does not currently define a maturity model. Maturity levels are planned for v1.1.
+- Maturity rating (`initial → optimizing`) is currently defined only on `capabilities` in the Reality layer. It does not yet extend to other artifact types or other layers — that broader coverage is planned for v1.1.
 
 ---
 

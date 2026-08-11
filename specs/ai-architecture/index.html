@@ -232,6 +232,11 @@
 <td><code>true</code> — signals AI card rendering</td>
 <td>Yes</td>
 </tr>
+<tr>
+<td><code>maturity</code></td>
+<td><code>initial | developing | defined | managed | optimizing</code></td>
+<td>Optional</td>
+</tr>
 </tbody></table>
 <p><strong>lifecycle_stage for models:</strong></p>
 <ul>
@@ -243,6 +248,7 @@
 <li><code>deprecated</code> — still running, actively being replaced</li>
 <li><code>retired</code> — decommissioned, no longer running</li>
 </ul>
+<p><code>maturity</code> is a separate axis from <code>lifecycle_stage</code>: lifecycle_stage tracks where the model sits in its deployment pipeline, <code>maturity</code> tracks how disciplined the governance around it is (monitoring, retraining cadence, evaluation rigor) — a <code>production</code> model can still be <code>initial</code> maturity if it ships with no monitoring or retraining process.</p>
 <h3>4.2 Systems</h3>
 <p><strong>The question:</strong> What AI-powered applications are built on those models?</p>
 <p>Systems are the applications, services, and workflows that use models to deliver value to users. A single model can power multiple systems. A system can chain multiple models. The key distinction from PRISM/A: Systems in PRISM/AI are AI-centric — they exist to deliver AI capability, not just to use AI as a component.</p>

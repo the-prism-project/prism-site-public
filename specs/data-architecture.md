@@ -110,6 +110,7 @@ Key fields:
 | `data_sensitivity` | `[pii, spii, phi, pci]` (list) | When applicable |
 | `compliance_frameworks` | `[GDPR, CCPA, HIPAA, SOX, PCI-DSS, APRA]` | When applicable |
 | `depends_on` | List of upstream domain/product IDs | When applicable |
+| `maturity` | `initial \| developing \| defined \| managed \| optimizing` | Optional — on `data_domain` only |
 
 **domain_type explained:**
 - `source` — originates data from a system of record (CRM, claims system, IoT)
