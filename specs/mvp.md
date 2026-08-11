@@ -69,7 +69,9 @@ PRISM/MVP inherits three principles from PRISM EA.
 
 Product landscapes are authored in YAML. Product managers, designers, engineers, and business stakeholders all need to read and write these files without specialized tooling. YAML's comments, block scalars, and minimal syntax noise make this tractable.
 
-### 2.2 Git-Native Learning
+### 2.2 Git-Native Learning (Architecture as Code)
+
+Product architecture in PRISM/MVP is architecture as code: hypotheses and bets live in git, not a slide deck that goes stale the day after the review.
 
 | Git concept | PRISM/MVP meaning |
 |-------------|------------------|

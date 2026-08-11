@@ -62,7 +62,9 @@ YAML because infrastructure landscapes must be readable and writable by platform
 
 JSON Schema because validation tooling (`ajv`, IDE plugins, CI validators) expects it.
 
-### 3.2 Git-Native Governance
+### 3.2 Git-Native Governance (Architecture as Code)
+
+Infrastructure architecture in PRISM/I is architecture as code: the landscape lives in git, not a CMDB or a diagramming tool.
 
 | Git concept | PRISM/I meaning |
 |-------------|-----------------|

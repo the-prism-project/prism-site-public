@@ -40,9 +40,9 @@ These five concerns become five dimensions.
 
 ## § 2 Foundational Principles
 
-### Git-native
+### Git-native (Architecture as Code)
 
-Every PRISM/D landscape lives in a directory committed to source control. Data architecture decisions are first-class code: reviewed, versioned, merged. A schema deprecation, a domain ownership transfer, a new pipeline — all committed, all traceable.
+Every PRISM/D landscape lives in a directory committed to source control. Data architecture decisions are first-class code — architecture as code applied to data: reviewed, versioned, merged. A schema deprecation, a domain ownership transfer, a new pipeline — all committed, all traceable.
 
 ### Domain ownership as a first-class concept
 

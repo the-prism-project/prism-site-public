@@ -50,7 +50,7 @@ Enterprise architecture practice identifies at least nine distinct concerns that
 
 ### 2.1 Source-First Architecture
 
-Architecture artifacts in PRISM are plain-text files. YAML for structured data. Markdown for narrative. The filesystem is the model. This has concrete benefits:
+This is **architecture as code**: PRISM treats the enterprise model the way software treats source — plain-text, versioned, diffable, reviewed in pull requests. Architecture artifacts in PRISM are plain-text files. YAML for structured data. Markdown for narrative. The filesystem is the model. This has concrete benefits:
 
 - Any developer tool works: editors, diff viewers, grep, CI pipelines.
 - No proprietary database or export step between "the model" and "the file."

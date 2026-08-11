@@ -42,9 +42,9 @@ These five concerns become five dimensions.
 
 ## § 2 Foundational Principles
 
-### Git-native
+### Git-native (Architecture as Code)
 
-Every PRISM/AI landscape lives in a directory committed to source control. A new model version, a guardrail update, a red-team finding — all committed, all traceable. AI architecture decisions are first-class code.
+Every PRISM/AI landscape lives in a directory committed to source control. A new model version, a guardrail update, a red-team finding — all committed, all traceable. AI architecture decisions are first-class code — this is architecture as code applied to AI systems.
 
 ### Models are architecture, not experiments
 

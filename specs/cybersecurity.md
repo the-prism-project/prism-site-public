@@ -51,7 +51,9 @@ PRISM/CY inherits three principles from PRISM EA.
 
 Security landscapes are authored in YAML. Schemas are in JSON Schema format. YAML because security teams, architects, GRC analysts, and CISOs need to read and write these files — not just developers. Comments, block scalars, and minimal syntax noise matter.
 
-### 2.2 Git-Native Governance
+### 2.2 Git-Native Governance (Architecture as Code)
+
+Security architecture in PRISM/CY is architecture as code: posture lives in git, not a spreadsheet or a slide deck.
 
 | Git concept | PRISM/CY meaning |
 |-------------|-----------------|

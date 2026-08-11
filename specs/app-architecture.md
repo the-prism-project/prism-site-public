@@ -57,7 +57,9 @@ PRISM/A inherits three principles from PRISM EA.
 
 Application landscapes are authored in YAML. Engineers, architects, and tech leads need to read and write these files without a modeling tool. YAML's comments, block scalars, and minimal syntax noise make this tractable.
 
-### 2.2 Git-Native Governance
+### 2.2 Git-Native Governance (Architecture as Code)
+
+Application architecture in PRISM/A is architecture as code: the landscape lives in git, not a diagramming tool or wiki page.
 
 | Git concept | PRISM/A meaning |
 |-------------|----------------|
