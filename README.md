@@ -1,5 +1,25 @@
 # PRISM Site
 
+Simple enough to start in an afternoon. Deep enough to govern a global enterprise.
+
+PRISM is an open enterprise architecture framework suite — seven frameworks
+(EA core, Infrastructure, Cybersecurity, AI Architecture, Application
+Architecture, Data Architecture, MVP/Product Validation) covering every
+architecture domain, each with its own dimensions, schemas, and examples,
+all sharing the same foundation.
+
+- Architecture as Code
+- Source-first
+- Git-native
+- Schema-validated
+- Plain-text YAML
+- No proprietary tooling
+- Domain-agnostic
+- Impact-aware
+- AI-inferable and authorable
+
+---
+
 This is the main public site for the PRISM Framework — currently the only
 public-facing surface of the project. It's a React/Vite app: landing page,
 landscape viewer/editor, spec browser.
