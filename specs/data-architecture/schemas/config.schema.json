@@ -1,0 +1,120 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-d/config",
+  "title": "PRISM/D — Configuration",
+  "description": "Configuration file for the PRISM/D Data Architecture framework. Stored at .prism-d/config.yaml.",
+  "type": "object",
+  "required": ["prism_d_version", "landscape", "primary_cloud", "data_mesh_topology"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_d_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "PRISM/D schema version in use."
+    },
+    "landscape": {
+      "type": "object",
+      "required": ["name", "owner"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "owner": { "type": "string" },
+        "description": { "type": "string" },
+        "organization": { "type": "string" }
+      }
+    },
+    "primary_cloud": {
+      "type": "string",
+      "enum": ["aws", "azure", "gcp", "multi-cloud", "on-prem", "hybrid"],
+      "description": "Primary cloud provider for the data platform."
+    },
+    "data_mesh_topology": {
+      "type": "string",
+      "enum": ["centralized", "federated", "mesh", "hybrid-mesh", "domain-oriented"],
+      "description": "The data architecture topology in use. 'mesh' implies full data mesh with domain ownership. 'federated' implies federated governance with central platform. 'centralized' is a traditional data warehouse/lake pattern."
+    },
+    "temporal": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "enum": ["single-file", "split-files"],
+          "description": "How temporal states are managed: single-file uses git history, split-files maintains separate baseline/target files."
+        },
+        "baseline_tag_pattern": {
+          "type": "string",
+          "description": "Git tag pattern for baselines (e.g. 'prism-d/baseline/YYYY-qN')."
+        },
+        "target_tag_pattern": {
+          "type": "string",
+          "description": "Git tag pattern for targets (e.g. 'prism-d/target/YYYY-qN')."
+        },
+        "transition_branch_pattern": {
+          "type": "string",
+          "description": "Git branch pattern for transitions (e.g. 'prism-d/transition/<program-slug>')."
+        }
+      }
+    },
+    "dimensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Per-dimension configuration and file paths.",
+      "properties": {
+        "domains": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "path": { "type": "string" }
+          }
+        },
+        "flows": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "path": { "type": "string" }
+          }
+        },
+        "platforms": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "path": { "type": "string" }
+          }
+        },
+        "contracts": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "path": { "type": "string" }
+          }
+        },
+        "governance": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "path": { "type": "string" }
+          }
+        }
+      }
+    },
+    "compliance_scope": {
+      "type": "array",
+      "description": "Compliance frameworks applicable across the entire data landscape.",
+      "items": { "type": "string" }
+    },
+    "notes": { "type": "string" },
+    "author": { "type": "string", "description": "Author or owner of this landscape." },
+    "contact": { "type": "string", "description": "Contact email or handle for questions about this landscape." },
+    "created_date": { "type": "string", "format": "date", "description": "ISO 8601 date when this landscape was first created." },
+    "last_modified": { "type": "string", "format": "date", "description": "ISO 8601 date of the last modification." },
+    "reviewed_by": { "type": "string", "description": "Name or handle of last reviewer." },
+    "review_date": { "type": "string", "format": "date", "description": "ISO 8601 date of last formal review." },
+    "status": { "type": "string", "enum": ["draft", "active", "archived"], "description": "Lifecycle status of this landscape." }
+  }
+}

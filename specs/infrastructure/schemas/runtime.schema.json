@@ -1,0 +1,139 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-i/runtime",
+  "title": "PRISM/I — R: Runtime",
+  "description": "Validates runtime/landscape.yaml. Captures compute, containers, functions, messaging, and orchestration.",
+  "type": "object",
+  "required": ["prism_i", "artifacts"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_i": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "runtime" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "type", "ownership"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": [
+              "cluster",
+              "node_pool",
+              "service",
+              "job",
+              "function",
+              "vm",
+              "queue",
+              "topic",
+              "stream",
+              "workflow_engine"
+            ],
+            "description": "cluster — container orchestration. node_pool — compute nodes within a cluster. service — long-running workload. job — batch or scheduled. function — serverless/FaaS. vm — virtual machine outside cluster. queue — message queue. topic — pub/sub topic. stream — ordered event stream. workflow_engine — workflow orchestration."
+          },
+          "ownership": {
+            "type": "string",
+            "enum": ["self", "internal", "external"]
+          },
+          "description": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "deprecated", "planned", "decommissioning"]
+          },
+          "temporal_state": {
+            "type": "string",
+            "enum": ["baseline", "transition", "target"]
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "links": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          },
+          "notes": { "type": "string" },
+          "data_sensitivity": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["pii", "spii", "phi", "pci"] }
+          },
+          "compliance_frameworks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["framework"],
+              "additionalProperties": false,
+              "properties": {
+                "framework": { "type": "string" },
+                "scope": { "type": "string" },
+                "status": {
+                  "type": "string",
+                  "enum": ["applicable", "certified", "in-progress", "exempt"]
+                },
+                "certification_date": { "type": "string", "format": "date" }
+              }
+            }
+          },
+          "cluster_id": {
+            "type": "string",
+            "description": "Parent cluster ID. For node_pool and service artifacts."
+          },
+          "environment_id": {
+            "type": "string",
+            "description": "Reference to a where/environment artifact ID."
+          },
+          "region_id": {
+            "type": "string",
+            "description": "Reference to a where/region artifact ID."
+          },
+          "technology": {
+            "type": "string",
+            "description": "Underlying technology (e.g., Kubernetes, ECS, Temporal, Kafka)."
+          },
+          "version": { "type": "string" },
+          "replicas": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "min": { "type": "integer", "minimum": 0 },
+              "max": { "type": "integer", "minimum": 1 }
+            }
+          },
+          "instance_type": {
+            "type": "string",
+            "description": "Cloud instance type (e.g., m6i.xlarge). For clusters, node_pools, and VMs."
+          },
+          "depends_on": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "dimension"],
+              "additionalProperties": false,
+              "properties": {
+                "id": { "type": "string" },
+                "dimension": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

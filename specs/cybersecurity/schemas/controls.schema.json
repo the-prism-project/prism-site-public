@@ -1,0 +1,106 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-cy/controls",
+  "title": "PRISM/CY — C: Controls",
+  "description": "Describes what is protecting the enterprise — technical controls (WAF, SIEM, MFA, CSPM, EDR, encryption) and organizational controls (access reviews, training, vendor assessments).",
+  "type": "object",
+  "required": ["dimension"],
+  "additionalProperties": false,
+  "definitions": {
+    "control_base": {
+      "type": "object",
+      "required": ["id", "name", "type", "ownership"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique artifact identifier (kebab-case)."
+        },
+        "name": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["technical_control", "org_control", "detective_control", "preventive_control", "corrective_control"]
+        },
+        "ownership": {
+          "type": "string",
+          "enum": ["self", "internal", "external"]
+        },
+        "description": { "type": "string" },
+        "control_function": {
+          "type": "string",
+          "enum": ["identify", "protect", "detect", "respond", "recover"],
+          "description": "NIST CSF function alignment for this control."
+        },
+        "coverage": {
+          "type": "string",
+          "enum": ["full", "partial", "planned"],
+          "description": "How broadly this control is currently applied."
+        },
+        "vendor": {
+          "type": "string",
+          "description": "Tool or service vendor implementing this control."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "planned", "decommissioning", "decommissioned", "deprecated"]
+        },
+        "temporal_state": {
+          "type": "string",
+          "enum": ["baseline", "transition", "target"]
+        },
+        "depends_on": {
+          "type": "array",
+          "description": "IDs of artifacts this control depends on.",
+          "items": { "type": "string" }
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "links": {
+          "type": "object",
+          "description": "Cross-framework links (soft references, not schema-enforced).",
+          "additionalProperties": { "type": "string" }
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  },
+  "properties": {
+    "dimension": { "const": "controls" },
+    "as_of": {
+      "type": "string",
+      "format": "date",
+      "description": "Date this dimension file accurately reflected the control posture."
+    },
+    "temporal_state": {
+      "type": "string",
+      "enum": ["baseline", "transition", "target"]
+    },
+    "technical_controls": {
+      "type": "array",
+      "description": "Technology-implemented controls: WAF, MFA, SIEM, CSPM, DLP, EDR, encryption.",
+      "items": { "$ref": "#/definitions/control_base" }
+    },
+    "org_controls": {
+      "type": "array",
+      "description": "Organizationally-implemented controls: access reviews, security training, vendor assessments, policy.",
+      "items": { "$ref": "#/definitions/control_base" }
+    },
+    "detective_controls": {
+      "type": "array",
+      "description": "Detection-focused controls: SIEM rules, anomaly detection, alerting thresholds.",
+      "items": { "$ref": "#/definitions/control_base" }
+    },
+    "preventive_controls": {
+      "type": "array",
+      "description": "Prevention-focused controls: WAF rules, IAM boundaries, network segmentation.",
+      "items": { "$ref": "#/definitions/control_base" }
+    },
+    "corrective_controls": {
+      "type": "array",
+      "description": "Response-focused controls: incident playbooks, auto-remediation, backup and restore.",
+      "items": { "$ref": "#/definitions/control_base" }
+    }
+  }
+}

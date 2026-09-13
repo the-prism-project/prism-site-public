@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-i/config",
+  "title": "PRISM/I — Infrastructure Config",
+  "description": "Validates the .prism-i/config.yaml file that governs PRISM/I framework configuration for a given landscape.",
+  "type": "object",
+  "required": ["prism_i"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_i": {
+      "type": "object",
+      "required": ["prism_i_version", "landscape_name"],
+      "additionalProperties": false,
+      "properties": {
+        "prism_i_version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+$",
+          "description": "PRISM/I schema version this landscape targets."
+        },
+        "landscape_name": {
+          "type": "string",
+          "description": "Human-readable name for this infrastructure landscape."
+        },
+        "description": { "type": "string" },
+        "temporal_mode": {
+          "type": "string",
+          "enum": ["single-file", "split-files"],
+          "description": "single-file: one landscape.yaml per dimension, navigated via git history. split-files: separate baseline.yaml and target.yaml per dimension."
+        },
+        "default_temporal_state": {
+          "type": "string",
+          "enum": ["baseline", "transition", "target"]
+        },
+        "owner_team": { "type": "string" },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "notes": { "type": "string" },
+        "author": { "type": "string", "description": "Author or owner of this landscape." },
+        "contact": { "type": "string", "description": "Contact email or handle for questions about this landscape." },
+        "created_date": { "type": "string", "format": "date", "description": "ISO 8601 date when this landscape was first created." },
+        "last_modified": { "type": "string", "format": "date", "description": "ISO 8601 date of the last modification." },
+        "reviewed_by": { "type": "string", "description": "Name or handle of last reviewer." },
+        "review_date": { "type": "string", "format": "date", "description": "ISO 8601 date of last formal review." },
+        "status": { "type": "string", "enum": ["draft", "active", "archived"], "description": "Lifecycle status of this landscape." }
+      }
+    }
+  }
+}

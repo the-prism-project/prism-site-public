@@ -1,0 +1,249 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-d/contracts",
+  "title": "PRISM/D — C: Contracts",
+  "description": "What governs data exchange: formal data contracts, schema definitions, quality rules, and SLAs.",
+  "type": "object",
+  "required": ["prism_d"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_d": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "contracts" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "data_contracts": {
+      "type": "array",
+      "description": "Formal agreements between a data producer and consumer specifying schema, quality, SLAs, and change protocols. Lifecycle: draft → proposed → agreed → enforced → breached | retired.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "producer", "consumer", "schema_version", "contract_state", "enforcement"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "producer": {
+            "type": "string",
+            "description": "Team or system providing the data."
+          },
+          "consumer": {
+            "type": "string",
+            "description": "Team or system consuming the data."
+          },
+          "schema_version": {
+            "type": "string",
+            "description": "Version of the schema this contract governs (semver or date-based)."
+          },
+          "contract_state": {
+            "type": "string",
+            "enum": ["draft", "proposed", "agreed", "enforced", "breached", "retired"],
+            "description": "Lifecycle state. draft — being authored; proposed — sent for review; agreed — both parties signed; enforced — tooling validates compliance; breached — SLA or schema violated; retired — superseded or decommissioned."
+          },
+          "enforcement": {
+            "type": "string",
+            "enum": ["advisory", "enforced", "breaking"],
+            "description": "advisory — violations logged but not blocked; enforced — violations block pipelines; breaking — incompatible changes reject the contract."
+          },
+          "quality_threshold": {
+            "type": "string",
+            "description": "Minimum acceptable data quality score or rule pass rate (e.g. '99.5% completeness', '<0.1% nulls on claim_id')."
+          },
+          "change_protocol": {
+            "type": "string",
+            "description": "How schema changes must be communicated and approved (e.g. '30-day notice', 'PR review required', 'semver-based versioning')."
+          },
+          "schema_def_id": {
+            "type": "string",
+            "description": "Reference to the schema_def artifact this contract is based on."
+          },
+          "sla_id": {
+            "type": "string",
+            "description": "Reference to the SLA artifact defining freshness and availability commitments."
+          },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "IDs of upstream contracts this contract depends on."
+          },
+          "effective_date": { "type": "string", "format": "date" },
+          "review_date": { "type": "string", "format": "date" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "deprecated", "retired"]
+          },
+          "temporal_state": {
+            "type": "string",
+            "enum": ["baseline", "transition", "target"]
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "schema_defs": {
+      "type": "array",
+      "description": "Versioned schema definitions. The canonical shape of data exchanged via a contract.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "producer", "consumer", "schema_version", "contract_state", "enforcement"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "producer": { "type": "string" },
+          "consumer": { "type": "string" },
+          "schema_version": { "type": "string" },
+          "contract_state": {
+            "type": "string",
+            "enum": ["draft", "proposed", "agreed", "enforced", "breached", "retired"]
+          },
+          "enforcement": {
+            "type": "string",
+            "enum": ["advisory", "enforced", "breaking"]
+          },
+          "format": {
+            "type": "string",
+            "enum": ["json-schema", "avro", "protobuf", "openapi", "graphql-sdl", "sql-ddl"],
+            "description": "Schema definition format."
+          },
+          "schema_registry_url": {
+            "type": "string",
+            "description": "Link to the schema registry or repository where the definition is stored."
+          },
+          "quality_threshold": { "type": "string" },
+          "change_protocol": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "deprecated", "retired"]
+          },
+          "temporal_state": {
+            "type": "string",
+            "enum": ["baseline", "transition", "target"]
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "quality_rules": {
+      "type": "array",
+      "description": "Data quality assertions that can be evaluated against a dataset or stream. Bound to a contract or domain.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "producer", "consumer", "schema_version", "contract_state", "enforcement"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "producer": { "type": "string" },
+          "consumer": { "type": "string" },
+          "schema_version": { "type": "string" },
+          "contract_state": {
+            "type": "string",
+            "enum": ["draft", "proposed", "agreed", "enforced", "breached", "retired"]
+          },
+          "enforcement": {
+            "type": "string",
+            "enum": ["advisory", "enforced", "breaking"]
+          },
+          "rule_type": {
+            "type": "string",
+            "enum": ["completeness", "uniqueness", "validity", "accuracy", "consistency", "timeliness", "referential-integrity"],
+            "description": "The dimension of data quality this rule measures."
+          },
+          "assertion": {
+            "type": "string",
+            "description": "The specific assertion being tested (e.g. 'claim_id IS NOT NULL', 'policy_number matches [A-Z]{2}\\d{8}')."
+          },
+          "quality_threshold": { "type": "string" },
+          "change_protocol": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "deprecated", "retired"]
+          },
+          "temporal_state": {
+            "type": "string",
+            "enum": ["baseline", "transition", "target"]
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "slas": {
+      "type": "array",
+      "description": "Service level agreements governing data freshness, availability, and recovery objectives.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "producer", "consumer", "schema_version", "contract_state", "enforcement"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "producer": { "type": "string" },
+          "consumer": { "type": "string" },
+          "schema_version": { "type": "string" },
+          "contract_state": {
+            "type": "string",
+            "enum": ["draft", "proposed", "agreed", "enforced", "breached", "retired"]
+          },
+          "enforcement": {
+            "type": "string",
+            "enum": ["advisory", "enforced", "breaking"]
+          },
+          "freshness_sla": {
+            "type": "string",
+            "description": "Maximum data age commitment (e.g. 'T+1h', 'T+24h', '<500ms')."
+          },
+          "availability_sla": {
+            "type": "string",
+            "description": "Uptime commitment (e.g. '99.9%')."
+          },
+          "rpo": {
+            "type": "string",
+            "description": "Recovery Point Objective — maximum acceptable data loss."
+          },
+          "rto": {
+            "type": "string",
+            "description": "Recovery Time Objective — maximum acceptable downtime."
+          },
+          "quality_threshold": { "type": "string" },
+          "change_protocol": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "deprecated", "retired"]
+          },
+          "temporal_state": {
+            "type": "string",
+            "enum": ["baseline", "transition", "target"]
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

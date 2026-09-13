@@ -1,0 +1,146 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-i/operations",
+  "title": "PRISM/I — O: Operations",
+  "description": "Validates operations/landscape.yaml. Captures CI/CD, registries, monitoring, logging, tracing, alerting, and SLOs.",
+  "type": "object",
+  "required": ["prism_i", "artifacts"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_i": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "operations" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "type", "ownership"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": [
+              "pipeline",
+              "registry",
+              "infrastructure_code",
+              "metrics",
+              "logging",
+              "tracing",
+              "alerting",
+              "dashboard",
+              "runbook",
+              "slo",
+              "chaos"
+            ],
+            "description": "pipeline — CI/CD pipeline. registry — container or artifact registry. infrastructure_code — IaC module (Terraform, Helm). metrics — Prometheus/CloudWatch/Datadog. logging — ELK/Loki/Splunk. tracing — Jaeger/Zipkin/X-Ray. alerting — PagerDuty/OpsGenie. dashboard — Grafana/Datadog dashboard. runbook — operational procedure. slo — service level objective. chaos — chaos engineering tooling."
+          },
+          "ownership": {
+            "type": "string",
+            "enum": ["self", "internal", "external"]
+          },
+          "description": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "deprecated", "planned", "decommissioning"]
+          },
+          "maturity": {
+            "type": "string",
+            "enum": ["initial", "developing", "defined", "managed", "optimizing"],
+            "description": "Operational maturity of this artifact's practice (e.g., pipeline discipline, monitoring coverage), independent of status."
+          },
+          "temporal_state": {
+            "type": "string",
+            "enum": ["baseline", "transition", "target"]
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "links": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          },
+          "notes": { "type": "string" },
+          "data_sensitivity": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["pii", "spii", "phi", "pci"] }
+          },
+          "compliance_frameworks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["framework"],
+              "additionalProperties": false,
+              "properties": {
+                "framework": { "type": "string" },
+                "scope": { "type": "string" },
+                "status": {
+                  "type": "string",
+                  "enum": ["applicable", "certified", "in-progress", "exempt"]
+                },
+                "certification_date": { "type": "string", "format": "date" }
+              }
+            }
+          },
+          "platform": {
+            "type": "string",
+            "description": "Tooling platform (e.g., GitHub Actions, Terraform, Prometheus, Grafana)."
+          },
+          "repo_url": {
+            "type": "string",
+            "description": "Source repository URL. For pipeline and infrastructure_code artifacts."
+          },
+          "target_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Artifact IDs this pipeline deploys or monitors (runtime service IDs, etc.)."
+          },
+          "slo_target": {
+            "type": "string",
+            "description": "SLO target expression (e.g., '99.9%', 'p99 < 500ms'). For slo artifacts."
+          },
+          "slo_window": {
+            "type": "string",
+            "description": "Rolling window for SLO measurement (e.g., '30d', '7d'). For slo artifacts."
+          },
+          "alerting_tool_id": {
+            "type": "string",
+            "description": "Reference to an alerting artifact ID that fires on SLO breach."
+          },
+          "iac_tool": {
+            "type": "string",
+            "enum": ["terraform", "helm", "pulumi", "cdk", "cloudformation", "ansible", "other"],
+            "description": "IaC tool. For infrastructure_code artifacts."
+          },
+          "depends_on": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "dimension"],
+              "additionalProperties": false,
+              "properties": {
+                "id": { "type": "string" },
+                "dimension": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

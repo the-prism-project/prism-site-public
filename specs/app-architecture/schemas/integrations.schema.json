@@ -1,0 +1,113 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-a/integrations",
+  "title": "PRISM/A — I: Integrations",
+  "description": "Cross-domain contracts: synchronous APIs, asynchronous events, data contracts, and adapter contracts.",
+  "type": "object",
+  "required": ["prism_a"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_a": {
+      "type": "object",
+      "required": ["dimension", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "dimension": { "const": "integrations" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "integrations": {
+      "type": "array",
+      "description": "Cross-domain contracts. Each integration is the formal boundary between two domains — the contract that must be stable even as internals change.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "artifact_type", "producer_domain", "consumer_domain"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stable identifier. Prefix convention: 'int-'."
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable integration name."
+          },
+          "artifact_type": {
+            "type": "string",
+            "enum": ["api", "event", "data_contract", "adapter_contract"],
+            "description": "Integration kind. api = synchronous (REST/GraphQL/gRPC); event = async message (Kafka/SNS/SQS/webhook); data_contract = structured exchange (batch/ETL/shared DB); adapter_contract = contract through anti-corruption layer."
+          },
+          "producer_domain": {
+            "type": "string",
+            "description": "Domain ID of the integration producer (the upstream owner)."
+          },
+          "consumer_domain": {
+            "type": "string",
+            "description": "Domain ID of the integration consumer (the downstream owner)."
+          },
+          "description": {
+            "type": "string",
+            "description": "What this integration does and why it exists."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "decommissioning", "decommissioned", "deprecated"],
+            "description": "Operational lifecycle status."
+          },
+          "direction": {
+            "type": "string",
+            "enum": ["inbound", "outbound", "bidirectional"],
+            "description": "Flow direction relative to the producer domain."
+          },
+          "coupling": {
+            "type": "string",
+            "enum": ["synchronous", "asynchronous", "batch"],
+            "description": "Temporal coupling of this integration."
+          },
+          "protocol": {
+            "type": "string",
+            "description": "Transport protocol or technology (e.g. 'REST', 'gRPC', 'Kafka', 'SNS/SQS', 'SFTP')."
+          },
+          "schema_registry": {
+            "type": "boolean",
+            "description": "Whether the payload schema is registered in a schema registry (e.g. Confluent Schema Registry, AWS Glue)."
+          },
+          "versioning": {
+            "type": "string",
+            "enum": ["none", "url-versioned", "header-versioned", "schema-versioned"],
+            "description": "API/event versioning strategy."
+          },
+          "data_sensitivity": {
+            "type": "array",
+            "description": "Data sensitivity categories carried by this integration.",
+            "items": {
+              "type": "string",
+              "enum": ["pii", "spii", "phi", "pci"]
+            },
+            "uniqueItems": true
+          },
+          "compliance_frameworks": {
+            "type": "array",
+            "description": "Compliance frameworks this integration must satisfy.",
+            "items": { "type": "string" }
+          },
+          "depends_on": {
+            "type": "array",
+            "description": "Component IDs involved in this integration. Used for blast radius analysis — if a component is decommissioned, tooling can surface which integrations break.",
+            "items": { "type": "string" }
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/temporal",
+  "title": "PRISM — Temporal Meta-Dimension",
+  "description": "Defines the temporal states across all PRISM layers. Not a standalone layer — this schema governs the temporal structure embedded in every PRISM artifact.",
+  "definitions": {
+    "temporal_state": {
+      "type": "string",
+      "enum": ["baseline", "transition", "target"],
+      "description": "baseline = as-is today. transition = an intermediate state during planned change. target = the desired future state."
+    },
+    "temporal_header": {
+      "type": "object",
+      "description": "Standard temporal front matter present in every PRISM layer artifact.",
+      "properties": {
+        "temporal_state": { "$ref": "#/definitions/temporal_state" },
+        "as_of": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date when baseline artifacts reflect reality, or when target artifacts are expected to be achieved."
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable label for this temporal snapshot (e.g., 'Baseline Jan 2025', 'Target FY2027 Q2')."
+        },
+        "supersedes": {
+          "type": "string",
+          "description": "Git tag or artifact label this artifact supersedes."
+        }
+      }
+    }
+  },
+  "type": "object",
+  "description": "This schema is informational. It documents the temporal conventions embedded in every PRISM artifact rather than validating a standalone file.",
+  "properties": {
+    "temporal_conventions": {
+      "type": "object",
+      "description": "Documents how git semantics map to PRISM temporal states.",
+      "properties": {
+        "baseline_tag_format": {
+          "type": "string",
+          "example": "prism/baseline/YYYY-MM",
+          "description": "Git tag pattern for published baselines."
+        },
+        "target_tag_format": {
+          "type": "string",
+          "example": "prism/target/YYYY-qN",
+          "description": "Git tag pattern for published targets."
+        },
+        "transition_branch_format": {
+          "type": "string",
+          "example": "prism/transition/<program-name>",
+          "description": "Git branch naming convention for transition work."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-i/control",
+  "title": "PRISM/I — C: Control",
+  "description": "Validates control/landscape.yaml. Captures networking, IAM, secrets, service mesh, and certificates.",
+  "type": "object",
+  "required": ["prism_i", "artifacts"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_i": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "control" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "type", "ownership"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": [
+              "vpc",
+              "subnet",
+              "peering",
+              "load_balancer",
+              "cdn",
+              "service_mesh",
+              "dns",
+              "certificate",
+              "iam_role",
+              "iam_policy",
+              "secret_store",
+              "firewall_rule"
+            ],
+            "description": "vpc — virtual private cloud or VNet. subnet — subnet within a VPC. peering — VPC peering or transit gateway. load_balancer — L4/L7 load balancer or API gateway. cdn — content delivery network. service_mesh — east-west traffic (Istio, Linkerd). dns — DNS zone or resolver. certificate — TLS/SSL certificate. iam_role — IAM role, service account, workload identity. iam_policy — permission policy. secret_store — Vault, AWS Secrets Manager. firewall_rule — security group, NACL, WAF rule."
+          },
+          "ownership": {
+            "type": "string",
+            "enum": ["self", "internal", "external"]
+          },
+          "description": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "deprecated", "planned", "decommissioning"]
+          },
+          "temporal_state": {
+            "type": "string",
+            "enum": ["baseline", "transition", "target"]
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "links": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          },
+          "notes": { "type": "string" },
+          "data_sensitivity": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["pii", "spii", "phi", "pci"] }
+          },
+          "compliance_frameworks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["framework"],
+              "additionalProperties": false,
+              "properties": {
+                "framework": { "type": "string" },
+                "scope": { "type": "string" },
+                "status": {
+                  "type": "string",
+                  "enum": ["applicable", "certified", "in-progress", "exempt"]
+                },
+                "certification_date": { "type": "string", "format": "date" }
+              }
+            }
+          },
+          "vpc_id": {
+            "type": "string",
+            "description": "Parent VPC artifact ID. For subnet, peering, load_balancer, dns artifacts."
+          },
+          "cidr_block": {
+            "type": "string",
+            "description": "CIDR notation. For vpc and subnet artifacts."
+          },
+          "region_id": {
+            "type": "string",
+            "description": "Reference to a where/region artifact ID."
+          },
+          "environment_id": {
+            "type": "string",
+            "description": "Reference to a where/environment artifact ID."
+          },
+          "layer": {
+            "type": "string",
+            "enum": ["L4", "L7"],
+            "description": "Network layer for load_balancer artifacts."
+          },
+          "public_facing": {
+            "type": "boolean",
+            "description": "Whether this artifact is internet-facing."
+          },
+          "tls_enabled": {
+            "type": "boolean",
+            "description": "Whether TLS termination is enabled."
+          },
+          "certificate_id": {
+            "type": "string",
+            "description": "Reference to a certificate artifact ID."
+          },
+          "expiry_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Expiration date. For certificate artifacts."
+          },
+          "principal": {
+            "type": "string",
+            "description": "IAM principal or workload identity this role is bound to."
+          },
+          "mfa_required": {
+            "type": "boolean",
+            "description": "Whether MFA is required to assume this role."
+          },
+          "permissions": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "High-level permission scopes for iam_role or iam_policy artifacts."
+          },
+          "depends_on": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "dimension"],
+              "additionalProperties": false,
+              "properties": {
+                "id": { "type": "string" },
+                "dimension": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-mvp/market",
+  "title": "PRISM/MVP — M: Market",
+  "description": "Who we're building for: segments, personas, channels, engagement models.",
+  "type": "object",
+  "required": ["prism"],
+  "additionalProperties": false,
+  "properties": {
+    "prism": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "market" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "segment_type", "jtbd", "validation_state"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "segment_type": { "type": "string", "enum": ["primary", "secondary", "negative"] },
+          "jtbd": { "type": "string", "description": "Jobs-to-Be-Done: When [situation], I want [motivation], so I can [outcome]." },
+          "size": { "type": "string", "enum": ["large", "medium", "niche"] },
+          "validation_state": { "type": "string", "enum": ["assumed", "observed", "validated"] },
+          "evidence": { "type": "string" },
+          "prism_ea_stakeholder": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "personas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "segment_id"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "segment_id": { "type": "string" },
+          "description": { "type": "string" },
+          "goals": { "type": "string" },
+          "frustrations": { "type": "string" },
+          "validation_state": { "type": "string", "enum": ["assumed", "observed", "validated"] },
+          "evidence": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "channels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "segment_id", "validation_state"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "segment_id": { "type": "string" },
+          "description": { "type": "string" },
+          "validation_state": { "type": "string", "enum": ["assumed", "observed", "validated"] },
+          "evidence": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "engagement_models": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "segment_id", "validation_state"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "segment_id": { "type": "string" },
+          "description": { "type": "string" },
+          "validation_state": { "type": "string", "enum": ["assumed", "observed", "validated"] },
+          "evidence": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

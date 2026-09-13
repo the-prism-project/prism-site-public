@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-cy/posture",
+  "title": "PRISM/CY — P: Posture",
+  "description": "Describes where the enterprise stands — compliance framework status, security maturity, open programs, and audit findings. Posture synthesizes the other four dimensions.",
+  "type": "object",
+  "required": ["dimension"],
+  "additionalProperties": false,
+  "definitions": {
+    "posture_base": {
+      "type": "object",
+      "required": ["id", "name", "type", "ownership"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique artifact identifier (kebab-case)."
+        },
+        "name": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["compliance", "maturity_assessment", "security_program", "finding"]
+        },
+        "ownership": {
+          "type": "string",
+          "enum": ["self", "internal", "external"]
+        },
+        "description": { "type": "string" },
+        "framework": {
+          "type": "string",
+          "enum": ["GDPR", "SOX", "ISO-27001", "SOC2", "PCI-DSS", "NIST-CSF", "HIPAA", "FedRAMP", "CCPA", "PDPA", "LGPD", "PIPEDA", "POPIA", "other"],
+          "description": "Compliance or security framework this artifact relates to."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "planned", "decommissioning", "decommissioned", "deprecated", "certified", "in-progress", "applicable", "exempt"],
+          "description": "Lifecycle status. For compliance artifacts: certified | in-progress | applicable | exempt."
+        },
+        "maturity_level": {
+          "type": "string",
+          "enum": ["initial", "defined", "managed", "optimized"],
+          "description": "Security maturity rating for this artifact or domain."
+        },
+        "certification_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date certification or audit was completed (compliance artifacts)."
+        },
+        "next_audit": {
+          "type": "string",
+          "format": "date",
+          "description": "Next scheduled audit or re-certification date."
+        },
+        "target_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Target completion date for in-progress compliance or program artifacts."
+        },
+        "temporal_state": {
+          "type": "string",
+          "enum": ["baseline", "transition", "target"]
+        },
+        "open_gaps": {
+          "type": "array",
+          "description": "Documented open gaps for this compliance or maturity artifact.",
+          "items": { "type": "string" }
+        },
+        "milestones": {
+          "type": "array",
+          "description": "Program milestones (security_program artifacts).",
+          "items": { "type": "string" }
+        },
+        "depends_on": {
+          "type": "array",
+          "description": "IDs of threat or finding artifacts this program is addressing.",
+          "items": { "type": "string" }
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "links": {
+          "type": "object",
+          "description": "Cross-framework links (soft references, not schema-enforced).",
+          "additionalProperties": { "type": "string" }
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  },
+  "properties": {
+    "dimension": { "const": "posture" },
+    "as_of": {
+      "type": "string",
+      "format": "date",
+      "description": "Date this dimension file accurately reflected the security posture."
+    },
+    "temporal_state": {
+      "type": "string",
+      "enum": ["baseline", "transition", "target"]
+    },
+    "compliance": {
+      "type": "array",
+      "description": "Compliance framework status artifacts: GDPR, SOX, ISO 27001, SOC 2, PCI-DSS.",
+      "items": { "$ref": "#/definitions/posture_base" }
+    },
+    "maturity_assessments": {
+      "type": "array",
+      "description": "Security maturity scores against a framework domain or control category.",
+      "items": { "$ref": "#/definitions/posture_base" }
+    },
+    "security_programs": {
+      "type": "array",
+      "description": "Active security remediation or improvement programs.",
+      "items": { "$ref": "#/definitions/posture_base" }
+    },
+    "findings": {
+      "type": "array",
+      "description": "Open findings from audits, penetration tests, or CSPM scans.",
+      "items": { "$ref": "#/definitions/posture_base" }
+    }
+  }
+}

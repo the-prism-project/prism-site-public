@@ -1,0 +1,120 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-mvp/signals",
+  "title": "PRISM/MVP — S: Signals",
+  "description": "What we're learning: metrics, experiments, results, learnings, pivots.",
+  "type": "object",
+  "required": ["prism"],
+  "additionalProperties": false,
+  "properties": {
+    "prism": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "signals" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "metric_type"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "metric_type": { "type": "string", "enum": ["north_star", "guardrail", "diagnostic"] },
+          "description": { "type": "string" },
+          "current_value": { "type": "string" },
+          "target_value": { "type": "string" },
+          "linked_hypothesis": { "type": "string" },
+          "linked_bet": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "experiments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "method"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "method": { "type": "string", "enum": ["a_b_test", "usability_study", "survey", "interview", "prototype", "dogfood", "beta", "shadow"] },
+          "description": { "type": "string" },
+          "linked_hypothesis": { "type": "string" },
+          "linked_bet": { "type": "string" },
+          "result_state": { "type": "string", "enum": ["pending", "supports", "refutes", "inconclusive"] },
+          "n": { "type": "integer" },
+          "confidence": { "type": "string", "enum": ["high", "medium", "low"] },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "result_state"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "result_state": { "type": "string", "enum": ["pending", "supports", "refutes", "inconclusive"] },
+          "description": { "type": "string" },
+          "linked_experiment": { "type": "string" },
+          "confidence": { "type": "string", "enum": ["high", "medium", "low"] },
+          "n": { "type": "integer" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "learnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "linked_result": { "type": "string" },
+          "linked_hypothesis": { "type": "string" },
+          "implications": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "pivots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "pivot_type"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "pivot_type": { "type": "string", "enum": ["zoom-in", "zoom-out", "customer-segment", "value", "channel", "platform", "business-model", "persist"] },
+          "description": { "type": "string" },
+          "linked_learning": { "type": "string" },
+          "rationale": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

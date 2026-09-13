@@ -1,0 +1,115 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-ai/models",
+  "title": "PRISM/AI — M: Models",
+  "description": "Inventory of AI models: foundation, fine-tuned, custom, embedding, classifiers, and explainability layers.",
+  "type": "object",
+  "required": ["prism", "models"],
+  "additionalProperties": false,
+  "properties": {
+    "prism": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "models" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "models": {
+      "type": "array",
+      "description": "AI model artifacts in this landscape.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "type", "model_provider", "capability_type", "lifecycle_stage", "version", "license", "ai_model"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "description": "Unique identifier for this model artifact." },
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["foundation_model", "fine_tuned_model", "custom_model", "embedding_model", "classifier", "explainability_layer"],
+            "description": "What kind of model artifact this is."
+          },
+          "model_provider": {
+            "type": "string",
+            "enum": ["anthropic", "openai", "google", "meta", "open-source", "proprietary"],
+            "description": "Who supplies or originally trained this model."
+          },
+          "capability_type": {
+            "type": "string",
+            "enum": ["generation", "classification", "embedding", "reasoning", "vision", "multimodal", "structured-output"],
+            "description": "Primary capability this model exposes."
+          },
+          "lifecycle_stage": {
+            "type": "string",
+            "enum": ["research", "training", "evaluation", "staging", "production", "deprecated", "retired"],
+            "description": "Current stage in the AI model lifecycle."
+          },
+          "version": {
+            "type": "string",
+            "description": "Version string for this model (e.g., '2.1', 'gpt-4o-2024-08-06')."
+          },
+          "license": {
+            "type": "string",
+            "enum": ["proprietary-api", "open-source-permissive", "open-source-restricted"],
+            "description": "Licensing terms governing use of this model."
+          },
+          "ai_model": {
+            "type": "boolean",
+            "const": true,
+            "description": "Always true — marks this artifact as an AI model for tooling."
+          },
+          "description": { "type": "string" },
+          "training_data_source": {
+            "type": "string",
+            "description": "PRISM/D domain reference or description of training data origin."
+          },
+          "accuracy": {
+            "type": "string",
+            "description": "Reported accuracy or key eval metric (e.g., '89.1%', 'BLEU 42.3')."
+          },
+          "latency_p99": {
+            "type": "string",
+            "description": "P99 inference latency in production (e.g., '<50ms', '145ms')."
+          },
+          "owner_team": { "type": "string" },
+          "maturity": {
+            "type": "string",
+            "enum": ["initial", "developing", "defined", "managed", "optimizing"],
+            "description": "Governance maturity around this model (monitoring, retraining, evaluation discipline), independent of lifecycle_stage."
+          },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "IDs of other model artifacts this one depends on (e.g., an explainability layer wrapping a base model)."
+          },
+          "compliance_frameworks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["framework"],
+              "additionalProperties": false,
+              "properties": {
+                "framework": { "type": "string" },
+                "scope": { "type": "string" },
+                "status": {
+                  "type": "string",
+                  "enum": ["applicable", "certified", "in-progress", "exempt"]
+                }
+              }
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

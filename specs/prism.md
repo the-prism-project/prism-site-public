@@ -125,7 +125,7 @@ Every PRISM artifact validates against a JSON Schema. This provides:
 - Self-documentation through schema descriptions
 - Clear contracts for tooling (renderers, dashboards, analyzers)
 
-Schemas live in `schema/` and are versioned alongside the framework.
+Schemas live in `schemas/` and are versioned alongside the framework.
 
 ### 2.4 Authorable Landscapes
 
@@ -318,7 +318,7 @@ prism:
 Schema validation can run locally:
 
 ```bash
-ajv validate -s prism/schema/reality.schema.json -d my-enterprise/reality/landscape.yaml
+ajv validate -s prism/schemas/reality.schema.json -d my-enterprise/reality/landscape.yaml
 ```
 
 Or in CI:
@@ -326,7 +326,7 @@ Or in CI:
 ```yaml
 # .github/workflows/prism-validate.yml
 - name: Validate PRISM artifacts
-  run: ajv validate -s prism/schema/*.schema.json -d landscape/**/*.yaml
+  run: ajv validate -s prism/schemas/*.schema.json -d landscape/**/*.yaml
 ```
 
 ---
@@ -744,5 +744,4 @@ Palakurthi, V.G. (2026). *PRISM: Enterprise architecture frameworks for the sour
 
 - Site: https://prism-framework.org/
 - PDF: https://prism-framework.org/PRISM_Framework_V1.0.pdf
-- SSRN: https://ssrn.com/abstract=7037719
-- Zenodo (DOI): https://doi.org/10.5281/zenodo.21325668
+- SSRN: https://dx.doi.org/10.2139/ssrn.7037719

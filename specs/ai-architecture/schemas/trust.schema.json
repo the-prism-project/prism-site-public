@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-ai/trust",
+  "title": "PRISM/AI — T: Trust",
+  "description": "Guardrails, bias assessments, red-team findings, alignment controls, and explainability requirements governing AI trustworthiness.",
+  "type": "object",
+  "required": ["prism", "trust"],
+  "additionalProperties": false,
+  "properties": {
+    "prism": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "trust" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "trust": {
+      "type": "array",
+      "description": "Trust artifacts declaring how AI model and system behavior is constrained, evaluated, and kept within intended boundaries.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "type", "trust_type", "enforcement", "remediation_status", "depends_on"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "description": "Unique identifier for this trust artifact." },
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["guardrail", "bias_assessment", "red_team_finding", "alignment_control", "explainability_config"],
+            "description": "What kind of trust artifact this is."
+          },
+          "trust_type": {
+            "type": "string",
+            "enum": ["accuracy", "alignment", "fairness", "safety", "explainability", "privacy"],
+            "description": "The dimension of trustworthiness this artifact addresses."
+          },
+          "enforcement": {
+            "type": "string",
+            "enum": ["blocking", "soft-block", "logging", "alerting", "advisory"],
+            "description": "How this trust control is enforced when triggered."
+          },
+          "remediation_status": {
+            "type": "string",
+            "enum": ["open", "mitigated", "resolved", "accepted"],
+            "description": "Current status of remediation or compliance with this control."
+          },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "IDs of the model or system artifacts this trust control applies to.",
+            "minItems": 1
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "Severity level — required for red_team_finding; recommended for all others."
+          },
+          "description": { "type": "string" },
+          "threshold": {
+            "type": "string",
+            "description": "The condition or threshold that triggers this control (e.g., 'accuracy < 87%', 'demographic disparity > 5%')."
+          },
+          "owner_team": { "type": "string" },
+          "review_cadence": {
+            "type": "string",
+            "description": "How often this control is reviewed or re-evaluated (e.g., 'quarterly', 'per-release')."
+          },
+          "evidence": {
+            "type": "string",
+            "description": "Link or reference to supporting evidence (test report, audit finding, eval run ID)."
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

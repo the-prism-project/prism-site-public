@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-i/where",
+  "title": "PRISM/I — WH: Where",
+  "description": "Validates where/landscape.yaml. Captures cloud accounts, regions, environments, and network zones.",
+  "type": "object",
+  "required": ["prism_i", "artifacts"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_i": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "where" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "type", "ownership"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["account", "region", "environment", "network_zone"],
+            "description": "account — cloud account/project/subscription. region — geographic deployment location. environment — production|staging|development|dr. network_zone — corp|dmz|restricted."
+          },
+          "ownership": {
+            "type": "string",
+            "enum": ["self", "internal", "external"]
+          },
+          "description": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "deprecated", "planned", "decommissioning"]
+          },
+          "temporal_state": {
+            "type": "string",
+            "enum": ["baseline", "transition", "target"]
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "links": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          },
+          "notes": { "type": "string" },
+          "provider_id": {
+            "type": "string",
+            "description": "Reference to a who/provider artifact ID."
+          },
+          "account_id": {
+            "type": "string",
+            "description": "Cloud account or subscription ID."
+          },
+          "parent_id": {
+            "type": "string",
+            "description": "Parent artifact ID (e.g., region inside account, environment inside region)."
+          },
+          "environment_tier": {
+            "type": "string",
+            "enum": ["production", "staging", "development", "dr"],
+            "description": "For environment artifacts only."
+          },
+          "network_zone_type": {
+            "type": "string",
+            "enum": ["corp", "dmz", "restricted"],
+            "description": "For network_zone artifacts only."
+          },
+          "cidr_block": {
+            "type": "string",
+            "description": "CIDR notation for network zones or VPC-backed environments."
+          },
+          "compliance_frameworks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["framework"],
+              "additionalProperties": false,
+              "properties": {
+                "framework": { "type": "string" },
+                "scope": { "type": "string" },
+                "status": {
+                  "type": "string",
+                  "enum": ["applicable", "certified", "in-progress", "exempt"]
+                },
+                "certification_date": { "type": "string", "format": "date" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

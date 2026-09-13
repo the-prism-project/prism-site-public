@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-a/config",
+  "title": "PRISM/A — Configuration",
+  "description": "Configuration file for a PRISM/A Application Architecture workspace (.prism-a/config.yaml).",
+  "type": "object",
+  "required": ["prism_a_version", "organization"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_a_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "PRISM/A schema version in use (e.g. '1.0')."
+    },
+    "organization": {
+      "type": "string",
+      "description": "Name of the organization or product team this workspace belongs to."
+    },
+    "description": {
+      "type": "string",
+      "description": "Free-text description of the scope or purpose of this workspace."
+    },
+    "domain": {
+      "type": "string",
+      "description": "Primary business domain this workspace covers (e.g. 'Insurance', 'Payments')."
+    },
+    "scope": {
+      "type": "string",
+      "enum": ["enterprise", "product", "scoped"],
+      "description": "Breadth of this workspace — enterprise-wide, a single product, or a scoped portion of one."
+    },
+    "temporal_state": {
+      "type": "string",
+      "enum": ["baseline", "transition", "target"],
+      "description": "Default temporal state for artifacts in this workspace."
+    },
+    "as_of": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO 8601 date this configuration reflects."
+    },
+    "active_dimensions": {
+      "type": "array",
+      "description": "Which PRISM/A dimensions are actively maintained in this workspace.",
+      "items": {
+        "type": "string",
+        "enum": ["domains", "components", "integrations", "quality", "evolution"]
+      },
+      "uniqueItems": true
+    },
+    "tech_governance": {
+      "type": "object",
+      "description": "Technical governance settings for this workspace.",
+      "additionalProperties": false,
+      "properties": {
+        "schema_registry": {
+          "type": "boolean",
+          "description": "Whether a schema registry (e.g. Confluent, AWS Glue) is in use for event/data contracts."
+        },
+        "adr_required": {
+          "type": "boolean",
+          "description": "Whether an ADR is required before any significant architectural decision."
+        },
+        "api_review_required": {
+          "type": "boolean",
+          "description": "Whether new APIs must pass a formal API design review before publication."
+        }
+      }
+    },
+    "author": { "type": "string", "description": "Author or owner of this landscape." },
+    "contact": { "type": "string", "description": "Contact email or handle for questions about this landscape." },
+    "created_date": { "type": "string", "format": "date", "description": "ISO 8601 date when this landscape was first created." },
+    "last_modified": { "type": "string", "format": "date", "description": "ISO 8601 date of the last modification." },
+    "reviewed_by": { "type": "string", "description": "Name or handle of last reviewer." },
+    "review_date": { "type": "string", "format": "date", "description": "ISO 8601 date of last formal review." },
+    "status": { "type": "string", "enum": ["draft", "active", "archived"], "description": "Lifecycle status of this landscape." }
+  }
+}

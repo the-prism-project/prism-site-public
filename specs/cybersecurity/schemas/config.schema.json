@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-cy/config",
+  "title": "PRISM/CY — Config",
+  "description": "Landscape-level configuration for a PRISM/CY cybersecurity landscape. Lives at .prism-cy/config.yaml.",
+  "type": "object",
+  "required": ["prism_cy_version", "organization", "active_dimensions"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_cy_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "PRISM/CY schema version in use (e.g., '1.0')."
+    },
+    "organization": {
+      "type": "string",
+      "description": "Name of the organization this landscape describes."
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description of the landscape scope and context."
+    },
+    "domain": {
+      "type": "string",
+      "description": "Industry or business domain (e.g., insurance, healthcare, finance)."
+    },
+    "scope": {
+      "type": "string",
+      "enum": ["enterprise", "division", "product", "team"],
+      "description": "Organizational scope of this landscape."
+    },
+    "temporal_state": {
+      "type": "string",
+      "enum": ["baseline", "transition", "target"],
+      "description": "Overall temporal state of this landscape snapshot."
+    },
+    "as_of": {
+      "type": "string",
+      "format": "date",
+      "description": "The date this landscape accurately reflected the security posture."
+    },
+    "active_dimensions": {
+      "type": "array",
+      "description": "Which PRISM/CY dimensions are in use for this landscape.",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": ["identity", "surface", "controls", "threats", "posture"]
+      }
+    },
+    "security_frameworks": {
+      "type": "array",
+      "description": "Compliance and security frameworks applicable to this landscape.",
+      "items": {
+        "type": "string",
+        "enum": ["GDPR", "SOX", "ISO-27001", "SOC2", "PCI-DSS", "NIST-CSF", "HIPAA", "FedRAMP", "CCPA", "PDPA", "LGPD", "PIPEDA", "POPIA", "other"]
+      }
+    },
+    "transition_programs": {
+      "type": "array",
+      "description": "Active security remediation or migration programs running across this landscape.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "complete", "paused", "cancelled"]
+          },
+          "target_date": { "type": "string", "format": "date" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    },
+    "author": { "type": "string", "description": "Author or owner of this landscape." },
+    "contact": { "type": "string", "description": "Contact email or handle for questions about this landscape." },
+    "created_date": { "type": "string", "format": "date", "description": "ISO 8601 date when this landscape was first created." },
+    "last_modified": { "type": "string", "format": "date", "description": "ISO 8601 date of the last modification." },
+    "reviewed_by": { "type": "string", "description": "Name or handle of last reviewer." },
+    "review_date": { "type": "string", "format": "date", "description": "ISO 8601 date of last formal review." },
+    "status": { "type": "string", "enum": ["draft", "active", "archived"], "description": "Lifecycle status of this landscape." }
+  }
+}

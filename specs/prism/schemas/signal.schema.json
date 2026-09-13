@@ -1,0 +1,242 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/signal",
+  "title": "PRISM — S: Signal",
+  "description": "Captures the exchange contracts, protocols, and integration patterns through which enterprise parts communicate and transfer value.",
+  "type": "object",
+  "required": ["prism"],
+  "additionalProperties": false,
+  "properties": {
+    "prism": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "signal" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "apis": {
+      "type": "array",
+      "description": "Synchronous interfaces between systems. Covers REST, GraphQL, gRPC, SOAP, and other request-response contracts.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "provider_system_id", "protocol"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "provider_system_id": {
+            "type": "string",
+            "description": "The system that owns and serves this API (reference to Reality system ID)."
+          },
+          "consumer_system_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Systems that consume this API."
+          },
+          "protocol": {
+            "type": "string",
+            "enum": ["REST", "GraphQL", "gRPC", "SOAP", "WebSocket", "EDI", "HL7", "FHIR", "proprietary", "other"],
+            "description": "Interface protocol."
+          },
+          "direction": {
+            "type": "string",
+            "enum": ["inbound", "outbound", "bidirectional"],
+            "description": "Flow direction relative to the enterprise boundary: inbound (data or calls entering the enterprise), outbound (leaving the enterprise), bidirectional (both directions)."
+          },
+          "integration_mode": {
+            "type": "string",
+            "enum": ["embedded", "handoff", "deep-link"],
+            "description": "Integration style: embedded (in-process coupling, shared context), handoff (one system transfers ownership to another), deep-link (UI-level cross-system linking without shared context)."
+          },
+          "spec_url": {
+            "type": "string",
+            "description": "URL or path to the interface specification (OpenAPI, AsyncAPI, WSDL, etc.)."
+          },
+          "authentication": {
+            "type": "string",
+            "description": "Authentication mechanism (e.g., 'OAuth 2.0', 'API Key', 'mTLS', 'None')."
+          },
+          "sla_id": { "type": "string", "description": "Reference to a service_agreement ID." },
+          "data_asset_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Data assets flowing through this interface."
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Free-form tags for filtering, indexing, and tooling (e.g., 'public-api', 'partner', 'deprecated')."
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "description": "Asynchronous signals — message queues, event streams, pub/sub topics, webhooks, physical notifications.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "producer_system_id", "pattern"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "producer_system_id": { "type": "string" },
+          "consumer_system_ids": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "pattern": {
+            "type": "string",
+            "enum": ["pub-sub", "point-to-point", "event-stream", "webhook", "batch", "broadcast", "physical-transfer"],
+            "description": "The exchange pattern. 'physical-transfer' supports non-IT domains (goods, documents, materials)."
+          },
+          "direction": {
+            "type": "string",
+            "enum": ["inbound", "outbound", "bidirectional"],
+            "description": "Flow direction relative to the enterprise boundary: inbound (events entering the enterprise), outbound (events leaving the enterprise), bidirectional."
+          },
+          "broker": {
+            "type": "string",
+            "description": "The messaging infrastructure (e.g., 'Apache Kafka', 'RabbitMQ', 'AWS SNS', 'physical mail')."
+          },
+          "schema_ref": {
+            "type": "string",
+            "description": "Reference to the event schema or payload specification."
+          },
+          "data_asset_ids": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Free-form tags for filtering, indexing, and tooling."
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "data_contracts": {
+      "type": "array",
+      "description": "Formal agreements about data shape, ownership, latency, and quality at system boundaries.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "producer_system_id", "consumer_system_ids"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "producer_system_id": { "type": "string" },
+          "consumer_system_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "data_asset_ids": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "freshness_sla": {
+            "type": "string",
+            "description": "Expected data freshness (e.g., 'near-realtime', '< 1 hour', 'daily batch')."
+          },
+          "quality_expectations": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Quality guarantees (e.g., 'no nulls in patient_id', 'completeness > 99%')."
+          },
+          "format": {
+            "type": "string",
+            "description": "Data format or schema standard (e.g., 'JSON Schema', 'Avro', 'Parquet', 'CSV', 'EDI 856')."
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Free-form tags for filtering, indexing, and tooling."
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "integration_patterns": {
+      "type": "array",
+      "description": "Architectural patterns governing how systems exchange information across the enterprise.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "pattern_type"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "pattern_type": {
+            "type": "string",
+            "enum": ["request-reply", "event-driven", "choreography", "orchestration", "batch-etl", "streaming-etl", "api-gateway", "service-mesh", "hub-and-spoke", "peer-to-peer"],
+            "description": "The integration architectural pattern."
+          },
+          "integration_mode": {
+            "type": "string",
+            "enum": ["embedded", "handoff", "deep-link"],
+            "description": "Integration style characteristic of this pattern: embedded (in-process), handoff (ownership transfer), deep-link (UI-level cross-system linking)."
+          },
+          "description": { "type": "string" },
+          "system_ids": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Free-form tags for filtering, indexing, and tooling."
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "service_agreements": {
+      "type": "array",
+      "description": "SLAs, SLOs, and SLIs between service providers and consumers.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "provider_system_id"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "provider_system_id": { "type": "string" },
+          "consumer_system_ids": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "availability_target": {
+            "type": "string",
+            "description": "Target availability (e.g., '99.9%', '99.99%')."
+          },
+          "latency_target": {
+            "type": "string",
+            "description": "Target response latency (e.g., 'p99 < 200ms', '< 4 hours for batch')."
+          },
+          "rpo": {
+            "type": "string",
+            "description": "Recovery Point Objective."
+          },
+          "rto": {
+            "type": "string",
+            "description": "Recovery Time Objective."
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Free-form tags for filtering, indexing, and tooling."
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

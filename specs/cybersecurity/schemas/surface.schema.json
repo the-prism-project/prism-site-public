@@ -1,0 +1,154 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-cy/surface",
+  "title": "PRISM/CY — S: Surface",
+  "description": "Describes what is exposed — the attack surface of the enterprise. Covers public endpoints, internal APIs, legacy interfaces, data exposure points, and admin consoles.",
+  "type": "object",
+  "required": ["dimension"],
+  "additionalProperties": false,
+  "definitions": {
+    "compliance_framework_item": {
+      "type": "object",
+      "required": ["framework"],
+      "additionalProperties": false,
+      "properties": {
+        "framework": {
+          "type": "string",
+          "enum": ["GDPR", "SOX", "ISO-27001", "SOC2", "PCI-DSS", "NIST-CSF", "HIPAA", "FedRAMP", "CCPA", "PDPA", "LGPD", "PIPEDA", "POPIA", "other"]
+        },
+        "scope": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["applicable", "certified", "in-progress", "exempt"]
+        },
+        "certification_date": { "type": "string", "format": "date" },
+        "notes": { "type": "string" }
+      }
+    },
+    "surface_base": {
+      "type": "object",
+      "required": ["id", "name", "type", "ownership"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique artifact identifier (kebab-case)."
+        },
+        "name": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["public_endpoint", "internal_endpoint", "legacy_interface", "data_exposure_point", "admin_console"]
+        },
+        "ownership": {
+          "type": "string",
+          "enum": ["self", "internal", "external"]
+        },
+        "description": { "type": "string" },
+        "direction": {
+          "type": "string",
+          "enum": ["inbound", "outbound", "bidirectional"],
+          "description": "Traffic flow direction for this surface."
+        },
+        "authentication": {
+          "type": "string",
+          "enum": ["none", "api-key", "oauth2", "saml", "mfa-required"],
+          "description": "Authentication mechanism protecting this surface."
+        },
+        "waf_protected": {
+          "type": "boolean",
+          "description": "Whether a WAF sits in front of this surface."
+        },
+        "classification": {
+          "type": "string",
+          "enum": ["none", "public", "internal", "proprietary", "confidential", "secret"]
+        },
+        "data_sensitivity": {
+          "type": "array",
+          "description": "Categories of sensitive data this surface can expose.",
+          "items": {
+            "type": "string",
+            "enum": ["pii", "spii", "phi", "pci"]
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "planned", "decommissioning", "decommissioned", "deprecated"]
+        },
+        "temporal_state": {
+          "type": "string",
+          "enum": ["baseline", "transition", "target"]
+        },
+        "target_resolution": {
+          "type": "string",
+          "format": "date",
+          "description": "Target decommission or remediation date."
+        },
+        "trigger_mode": {
+          "type": "string",
+          "enum": ["automated", "manual", "scheduled"],
+          "description": "How this surface is triggered (relevant for legacy and batch interfaces)."
+        },
+        "prism_ea_system": {
+          "type": "string",
+          "description": "Soft reference to a PRISM EA system ID (R layer)."
+        },
+        "compliance_frameworks": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/compliance_framework_item" }
+        },
+        "depends_on": {
+          "type": "array",
+          "description": "IDs of artifacts this surface depends on.",
+          "items": { "type": "string" }
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "links": {
+          "type": "object",
+          "description": "Cross-framework links (soft references, not schema-enforced).",
+          "additionalProperties": { "type": "string" }
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  },
+  "properties": {
+    "dimension": { "const": "surface" },
+    "as_of": {
+      "type": "string",
+      "format": "date",
+      "description": "Date this dimension file accurately reflected the attack surface."
+    },
+    "temporal_state": {
+      "type": "string",
+      "enum": ["baseline", "transition", "target"]
+    },
+    "public_endpoints": {
+      "type": "array",
+      "description": "Internet-facing endpoints: HTTPS, API gateways, webhook receivers.",
+      "items": { "$ref": "#/definitions/surface_base" }
+    },
+    "internal_endpoints": {
+      "type": "array",
+      "description": "Private endpoints: VPC-internal APIs, service mesh endpoints.",
+      "items": { "$ref": "#/definitions/surface_base" }
+    },
+    "legacy_interfaces": {
+      "type": "array",
+      "description": "Pre-modern interfaces: JCL batch, SFTP, mainframe terminals.",
+      "items": { "$ref": "#/definitions/surface_base" }
+    },
+    "data_exposure_points": {
+      "type": "array",
+      "description": "Where data leaves a boundary: export APIs, partner data feeds, presigned URLs.",
+      "items": { "$ref": "#/definitions/surface_base" }
+    },
+    "admin_consoles": {
+      "type": "array",
+      "description": "Administrative interfaces: cloud consoles, bastion hosts.",
+      "items": { "$ref": "#/definitions/surface_base" }
+    }
+  }
+}

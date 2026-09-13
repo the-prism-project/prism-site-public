@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-ai/config",
+  "title": "PRISM/AI — Config",
+  "description": "Configuration schema for a PRISM/AI landscape. Declares scope, risk class, and active dimensions for an AI architecture engagement.",
+  "type": "object",
+  "required": ["prism_ai_version", "organization"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_ai_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "Schema version for PRISM/AI artifacts in this landscape."
+    },
+    "organization": {
+      "type": "string",
+      "description": "Name of the organization this landscape belongs to."
+    },
+    "product": {
+      "type": "string",
+      "description": "Product or platform scope, if narrower than the full organization."
+    },
+    "domain": {
+      "type": "string",
+      "description": "Business domain (e.g., claims, underwriting, customer-service)."
+    },
+    "scope": {
+      "type": "string",
+      "enum": ["enterprise", "product", "feature"],
+      "description": "Breadth of this PRISM/AI landscape."
+    },
+    "temporal_state": {
+      "type": "string",
+      "enum": ["baseline", "transition", "target"],
+      "description": "Whether this config describes current reality, an in-flight change, or a desired future state."
+    },
+    "as_of": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO 8601 date this config accurately reflected the landscape."
+    },
+    "active_dimensions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["models", "systems", "lifecycle", "trust", "observability"]
+      },
+      "description": "Which PRISM/AI dimensions are actively maintained in this landscape.",
+      "minItems": 1
+    },
+    "ai_risk_class": {
+      "type": "string",
+      "enum": ["minimal", "limited", "high", "unacceptable"],
+      "description": "EU AI Act risk classification for the AI systems in scope."
+    },
+    "human_in_loop_required": {
+      "type": "boolean",
+      "description": "Whether all AI-driven decisions in this landscape require a human review step before acting."
+    },
+    "notes": {
+      "type": "string"
+    },
+    "author": { "type": "string", "description": "Author or owner of this landscape." },
+    "contact": { "type": "string", "description": "Contact email or handle for questions about this landscape." },
+    "created_date": { "type": "string", "format": "date", "description": "ISO 8601 date when this landscape was first created." },
+    "last_modified": { "type": "string", "format": "date", "description": "ISO 8601 date of the last modification." },
+    "reviewed_by": { "type": "string", "description": "Name or handle of last reviewer." },
+    "review_date": { "type": "string", "format": "date", "description": "ISO 8601 date of last formal review." },
+    "status": { "type": "string", "enum": ["draft", "active", "archived"], "description": "Lifecycle status of this landscape." }
+  }
+}

@@ -566,5 +566,4 @@ Palakurthi, V.G. (2026). *PRISM: Enterprise architecture frameworks for the sour
 
 - Site: https://prism-framework.org/
 - PDF: https://prism-framework.org/PRISM_Framework_V1.0.pdf
-- SSRN: https://ssrn.com/abstract=7037719
-- Zenodo (DOI): https://doi.org/10.5281/zenodo.21325668
+- SSRN: https://dx.doi.org/10.2139/ssrn.7037719

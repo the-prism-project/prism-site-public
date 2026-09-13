@@ -1,0 +1,251 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/movement",
+  "title": "PRISM — M: Movement",
+  "description": "Captures the human signal in the enterprise (Pulse) and its chronological architecture journey (Trajectory). Addresses adoption, sentiment, change readiness, ethics, and the baseline-to-target arc.",
+  "type": "object",
+  "required": ["prism"],
+  "additionalProperties": false,
+  "properties": {
+    "prism": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "movement" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "pulse": {
+      "type": "object",
+      "description": "The human signal in the enterprise. Qualitative and quantitative indicators of adoption, readiness, and sentiment.",
+      "additionalProperties": false,
+      "properties": {
+        "adoption_signals": {
+          "type": "array",
+          "description": "Indicators of how well stakeholders are actually using systems and processes (not just deployed, but adopted).",
+          "items": {
+            "type": "object",
+            "required": ["id", "subject_id", "subject_type", "adoption_level"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "subject_id": {
+                "type": "string",
+                "description": "Reference to a system ID, process ID, or capability ID being measured."
+              },
+              "subject_type": {
+                "type": "string",
+                "enum": ["system", "process", "capability"],
+                "description": "The type of subject being measured."
+              },
+              "stakeholder_ids": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Stakeholder groups for which adoption is being measured."
+              },
+              "adoption_level": {
+                "type": "string",
+                "enum": ["none", "aware", "exploring", "partial", "active", "embedded"],
+                "description": "How deeply the subject is adopted by the specified stakeholder groups."
+              },
+              "velocity": {
+                "type": "string",
+                "enum": ["accelerating", "steady", "slowing", "stalled", "declining"],
+                "description": "Direction of adoption change."
+              },
+              "measurement_method": {
+                "type": "string",
+                "description": "How adoption level was determined (e.g., 'usage analytics', 'stakeholder survey', 'observation', 'login rate')."
+              },
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "sentiment": {
+          "type": "array",
+          "description": "Qualitative signal from stakeholders — resistance, enthusiasm, confusion, fatigue.",
+          "items": {
+            "type": "object",
+            "required": ["id", "stakeholder_ids", "subject_id", "signal"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "stakeholder_ids": {
+                "type": "array",
+                "items": { "type": "string" },
+                "minItems": 1
+              },
+              "subject_id": { "type": "string" },
+              "signal": {
+                "type": "string",
+                "enum": ["enthusiastic", "positive", "neutral", "skeptical", "resistant", "confused", "fatigued"],
+                "description": "The dominant sentiment signal."
+              },
+              "intensity": {
+                "type": "string",
+                "enum": ["low", "moderate", "high"],
+                "description": "Strength of the sentiment."
+              },
+              "source": {
+                "type": "string",
+                "description": "How this sentiment was captured (e.g., 'workshop', 'survey', 'interviews', 'informal feedback')."
+              },
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "change_readiness": {
+          "type": "array",
+          "description": "Organizational capacity to absorb change at a given point in time.",
+          "items": {
+            "type": "object",
+            "required": ["id", "stakeholder_ids", "readiness_level"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "stakeholder_ids": {
+                "type": "array",
+                "items": { "type": "string" },
+                "minItems": 1
+              },
+              "subject_id": {
+                "type": "string",
+                "description": "The change or transformation program this readiness refers to."
+              },
+              "readiness_level": {
+                "type": "string",
+                "enum": ["not-ready", "low", "moderate", "high", "leading"],
+                "description": "Organizational readiness level."
+              },
+              "blockers": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Known barriers to change adoption."
+              },
+              "enablers": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Factors supporting readiness."
+              },
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "ethics_markers": {
+          "type": "array",
+          "description": "Known ethical considerations, bias risks, fairness concerns, and accountability gaps.",
+          "items": {
+            "type": "object",
+            "required": ["id", "subject_id", "concern_type"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "subject_id": { "type": "string" },
+              "concern_type": {
+                "type": "string",
+                "enum": ["bias", "fairness", "privacy", "transparency", "accountability", "safety", "environmental", "consent", "accessibility"],
+                "description": "Category of ethical concern."
+              },
+              "description": {
+                "type": "string",
+                "description": "Specific nature of the concern. Be concrete — vague markers provide no value."
+              },
+              "severity": {
+                "type": "string",
+                "enum": ["low", "moderate", "high", "critical"]
+              },
+              "owner_stakeholder_id": { "type": "string" },
+              "mitigation": { "type": "string" },
+              "status": {
+                "type": "string",
+                "enum": ["identified", "under-review", "mitigated", "accepted", "escalated"]
+              },
+              "notes": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "trajectory": {
+      "type": "object",
+      "description": "The chronological arc of the enterprise — where it came from, where it's at, and where it's going.",
+      "additionalProperties": false,
+      "properties": {
+        "baseline_description": {
+          "type": "string",
+          "description": "Narrative description of the as-is state. Anchors the transition story."
+        },
+        "target_description": {
+          "type": "string",
+          "description": "Narrative description of the desired to-be state."
+        },
+        "transition_programs": {
+          "type": "array",
+          "description": "Active or planned transformation programs moving the enterprise from baseline toward target.",
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "status"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "name": { "type": "string" },
+              "description": { "type": "string" },
+              "status": {
+                "type": "string",
+                "enum": ["planned", "in-progress", "paused", "complete", "cancelled"]
+              },
+              "start_date": { "type": "string", "format": "date" },
+              "target_date": { "type": "string", "format": "date" },
+              "affected_layer_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": ["people-place", "reality", "intent", "signal", "movement"]
+                },
+                "description": "PRISM layers this program affects."
+              },
+              "owner_stakeholder_id": { "type": "string" },
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "decisions": {
+          "type": "array",
+          "description": "Key architectural decisions and their rationale. Cross-references git history via commit SHA when applicable.",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "decision", "date"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "title": { "type": "string" },
+              "decision": {
+                "type": "string",
+                "description": "The decision made. State it clearly — not the options considered, but what was chosen."
+              },
+              "rationale": {
+                "type": "string",
+                "description": "Why this decision was made."
+              },
+              "date": { "type": "string", "format": "date" },
+              "owner_stakeholder_id": { "type": "string" },
+              "git_commit_sha": {
+                "type": "string",
+                "description": "Git commit SHA marking when this decision was encoded in the architecture."
+              },
+              "supersedes_decision_id": {
+                "type": "string",
+                "description": "If this decision overrides a previous one, reference it here."
+              },
+              "notes": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

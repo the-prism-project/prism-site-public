@@ -1,0 +1,257 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-d/flows",
+  "title": "PRISM/D — F: Flows",
+  "description": "How data moves: batch pipelines, event streams, system syncs, and synchronous data APIs.",
+  "type": "object",
+  "required": ["prism_d"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_d": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "flows" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "pipelines": {
+      "type": "array",
+      "description": "Batch or streaming transformation pipelines (Spark, dbt, Flink, Beam). Scheduled or trigger-based.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "source", "destination", "frequency", "latency_sla", "transformation_type"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "source": {
+            "type": "string",
+            "description": "ID of the source system, dataset, or domain."
+          },
+          "destination": {
+            "type": "string",
+            "description": "ID of the destination platform, dataset, or domain."
+          },
+          "frequency": {
+            "type": "string",
+            "enum": ["real-time", "near-real-time", "hourly", "daily", "weekly", "on-demand"]
+          },
+          "latency_sla": {
+            "type": "string",
+            "description": "Maximum acceptable lag from source event to destination availability (e.g. 'T+1h', '<500ms')."
+          },
+          "transformation_type": {
+            "type": "string",
+            "enum": ["raw", "filtered", "aggregated", "enriched", "normalized", "feature-engineered"]
+          },
+          "technology": {
+            "type": "string",
+            "description": "Processing engine (e.g. Spark, dbt, Flink, Airflow)."
+          },
+          "failure_mode": {
+            "type": "string",
+            "description": "Behavior on failure: what breaks, what degrades, what is retried."
+          },
+          "data_sensitivity": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["pii", "spii", "phi", "pci"]
+            }
+          },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "IDs of upstream flows or datasets this pipeline depends on."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "deprecated", "retired"]
+          },
+          "temporal_state": {
+            "type": "string",
+            "enum": ["baseline", "transition", "target"]
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "event_streams": {
+      "type": "array",
+      "description": "Real-time event bus flows (Kafka, Kinesis, Pub/Sub, EventBridge). Continuous, low-latency.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "source", "destination", "frequency", "latency_sla", "transformation_type"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "source": { "type": "string" },
+          "destination": { "type": "string" },
+          "frequency": {
+            "type": "string",
+            "enum": ["real-time", "near-real-time", "hourly", "daily", "weekly", "on-demand"]
+          },
+          "latency_sla": { "type": "string" },
+          "transformation_type": {
+            "type": "string",
+            "enum": ["raw", "filtered", "aggregated", "enriched", "normalized", "feature-engineered"]
+          },
+          "topic": {
+            "type": "string",
+            "description": "Event bus topic or stream name."
+          },
+          "technology": { "type": "string" },
+          "failure_mode": { "type": "string" },
+          "data_sensitivity": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["pii", "spii", "phi", "pci"]
+            }
+          },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "deprecated", "retired"]
+          },
+          "temporal_state": {
+            "type": "string",
+            "enum": ["baseline", "transition", "target"]
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "syncs": {
+      "type": "array",
+      "description": "System-to-system synchronization flows and change-data-capture (CDC) pipelines.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "source", "destination", "frequency", "latency_sla", "transformation_type"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "source": { "type": "string" },
+          "destination": { "type": "string" },
+          "frequency": {
+            "type": "string",
+            "enum": ["real-time", "near-real-time", "hourly", "daily", "weekly", "on-demand"]
+          },
+          "latency_sla": { "type": "string" },
+          "transformation_type": {
+            "type": "string",
+            "enum": ["raw", "filtered", "aggregated", "enriched", "normalized", "feature-engineered"]
+          },
+          "sync_mode": {
+            "type": "string",
+            "enum": ["full-refresh", "incremental", "cdc", "bidirectional"],
+            "description": "How data is synchronized between systems."
+          },
+          "technology": { "type": "string" },
+          "failure_mode": { "type": "string" },
+          "data_sensitivity": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["pii", "spii", "phi", "pci"]
+            }
+          },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "deprecated", "retired"]
+          },
+          "temporal_state": {
+            "type": "string",
+            "enum": ["baseline", "transition", "target"]
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "data_apis": {
+      "type": "array",
+      "description": "Synchronous data-serving APIs. Query-on-demand, low-latency. Not a pipeline — a request/response interface over data.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "source", "destination", "frequency", "latency_sla", "transformation_type"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "source": { "type": "string" },
+          "destination": { "type": "string" },
+          "frequency": {
+            "type": "string",
+            "enum": ["real-time", "near-real-time", "hourly", "daily", "weekly", "on-demand"]
+          },
+          "latency_sla": { "type": "string" },
+          "transformation_type": {
+            "type": "string",
+            "enum": ["raw", "filtered", "aggregated", "enriched", "normalized", "feature-engineered"]
+          },
+          "protocol": {
+            "type": "string",
+            "enum": ["rest", "graphql", "grpc", "websocket"],
+            "description": "API protocol."
+          },
+          "technology": { "type": "string" },
+          "failure_mode": { "type": "string" },
+          "data_sensitivity": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["pii", "spii", "phi", "pci"]
+            }
+          },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "deprecated", "retired"]
+          },
+          "temporal_state": {
+            "type": "string",
+            "enum": ["baseline", "transition", "target"]
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

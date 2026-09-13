@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-mvp/config",
+  "title": "PRISM/MVP — Config",
+  "description": "Top-level configuration for a PRISM/MVP product validation workspace.",
+  "type": "object",
+  "required": ["prism_mvp_version", "organization", "product"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_mvp_version": { "type": "string" },
+    "organization": { "type": "string" },
+    "product": { "type": "string" },
+    "description": { "type": "string" },
+    "domain": { "type": "string" },
+    "scope": { "type": "string", "enum": ["enterprise", "product", "feature"] },
+    "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+    "as_of": { "type": "string", "format": "date" },
+    "active_dimensions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "target_segments": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "learning_cadence": { "type": "string" },
+    "author": { "type": "string", "description": "Author or owner of this landscape." },
+    "contact": { "type": "string", "description": "Contact email or handle for questions about this landscape." },
+    "created_date": { "type": "string", "format": "date", "description": "ISO 8601 date when this landscape was first created." },
+    "last_modified": { "type": "string", "format": "date", "description": "ISO 8601 date of the last modification." },
+    "reviewed_by": { "type": "string", "description": "Name or handle of last reviewer." },
+    "review_date": { "type": "string", "format": "date", "description": "ISO 8601 date of last formal review." },
+    "status": { "type": "string", "enum": ["draft", "active", "archived"], "description": "Lifecycle status of this landscape." }
+  }
+}

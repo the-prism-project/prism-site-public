@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism",
+  "title": "PRISM Framework — Root Configuration Schema",
+  "description": "Validates .prism/config.yaml — the configuration file that initializes a PRISM landscape in a repository.",
+  "type": "object",
+  "required": ["prism"],
+  "additionalProperties": false,
+  "properties": {
+    "prism": {
+      "type": "object",
+      "required": ["version", "organization", "domain"],
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+$",
+          "description": "PRISM framework version this landscape targets (e.g., '1.0').",
+          "example": "1.0"
+        },
+        "organization": {
+          "type": "string",
+          "description": "Name of the enterprise or organization this landscape describes.",
+          "example": "Acme Corporation"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Primary domain of the enterprise. Free text — not constrained to IT.",
+          "examples": ["information-technology", "healthcare", "manufacturing", "logistics", "financial-services", "public-sector", "retail"]
+        },
+        "description": {
+          "type": "string",
+          "description": "One to two sentences describing what this landscape covers and its intended scope."
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["full", "partial", "scoped"],
+          "description": "full = all five layers active. partial = selected layers only. scoped = bounded to a department or capability."
+        },
+        "active_layers": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["people-place", "reality", "intent", "signal", "movement"]
+          },
+          "description": "The PRISM layers actively maintained in this landscape. Omit layers not relevant to current scope.",
+          "minItems": 1
+        },
+        "temporal": {
+          "type": "object",
+          "description": "Temporal configuration for this landscape.",
+          "additionalProperties": false,
+          "properties": {
+            "baseline_as_of": {
+              "type": "string",
+              "format": "date",
+              "description": "The date the current baseline artifacts were accurate."
+            },
+            "target_date": {
+              "type": "string",
+              "format": "date",
+              "description": "The date by which the target architecture is expected to be achieved."
+            }
+          }
+        },
+        "contacts": {
+          "type": "array",
+          "description": "Primary contacts for this PRISM landscape.",
+          "items": {
+            "type": "object",
+            "required": ["name", "role"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "role": { "type": "string", "description": "e.g., 'Lead Enterprise Architect', 'Business Sponsor'." },
+              "email": { "type": "string", "format": "email" }
+            }
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Free-text tags for indexing and tooling (e.g., 'cloud-migration', 'regulatory', 'mvp')."
+        }
+      }
+    }
+  }
+}

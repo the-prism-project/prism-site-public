@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-a/domains",
+  "title": "PRISM/A — D: Domains",
+  "description": "Bounded contexts with DDD classification, ubiquitous language, and ownership. One file per landscape or per domain cluster.",
+  "type": "object",
+  "required": ["prism_a"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_a": {
+      "type": "object",
+      "required": ["dimension", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "dimension": { "const": "domains" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "domains": {
+      "type": "array",
+      "description": "Bounded contexts. Each domain owns its data model, its ubiquitous language, and a clearly named team or stakeholder.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "domain_type"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stable identifier. Prefix convention: 'dom-'."
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable domain name (noun phrase, e.g. 'Claims Processing')."
+          },
+          "artifact_type": {
+            "const": "domain"
+          },
+          "description": {
+            "type": "string",
+            "description": "What this domain is responsible for — its core purpose and boundaries."
+          },
+          "domain_type": {
+            "type": "string",
+            "enum": ["core", "supporting", "generic"],
+            "description": "DDD strategic classification. core = competitive differentiator; supporting = necessary but not differentiating; generic = commodity, candidate for off-the-shelf solution."
+          },
+          "maturity": {
+            "type": "string",
+            "enum": ["initial", "defined", "managed"],
+            "description": "Maturity of the domain's ownership, documentation, and practices."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "decommissioning", "decommissioned", "deprecated"],
+            "description": "Operational status of this domain."
+          },
+          "owner_stakeholder_id": {
+            "type": "string",
+            "description": "Reference to the stakeholder (team or person) who owns this domain. Cross-references PRISM EA stakeholder registry."
+          },
+          "ubiquitous_language": {
+            "type": "array",
+            "description": "Key terms that have precise, agreed meanings within this domain. Ubiquitous language prevents cross-domain ambiguity.",
+            "items": { "type": "string" }
+          },
+          "component_ids": {
+            "type": "array",
+            "description": "IDs of components (from the C dimension) that belong to this domain.",
+            "items": { "type": "string" }
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

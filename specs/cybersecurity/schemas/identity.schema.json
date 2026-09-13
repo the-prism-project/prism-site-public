@@ -1,0 +1,153 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-cy/identity",
+  "title": "PRISM/CY — ID: Identity",
+  "description": "Describes who and what has access to enterprise systems — IAM roles, service accounts, external identities, privileged access, and federation configurations.",
+  "type": "object",
+  "required": ["dimension"],
+  "additionalProperties": false,
+  "definitions": {
+    "compliance_framework_item": {
+      "type": "object",
+      "required": ["framework"],
+      "additionalProperties": false,
+      "properties": {
+        "framework": {
+          "type": "string",
+          "enum": ["GDPR", "SOX", "ISO-27001", "SOC2", "PCI-DSS", "NIST-CSF", "HIPAA", "FedRAMP", "CCPA", "PDPA", "LGPD", "PIPEDA", "POPIA", "other"]
+        },
+        "scope": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["applicable", "certified", "in-progress", "exempt"]
+        },
+        "certification_date": { "type": "string", "format": "date" },
+        "notes": { "type": "string" }
+      }
+    },
+    "identity_base": {
+      "type": "object",
+      "required": ["id", "name", "type", "ownership"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique artifact identifier (kebab-case)."
+        },
+        "name": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["iam_role", "service_account", "external_identity", "privileged_access", "federation"]
+        },
+        "ownership": {
+          "type": "string",
+          "enum": ["self", "internal", "external"],
+          "description": "Who owns and controls this identity."
+        },
+        "description": { "type": "string" },
+        "access_level": {
+          "type": "string",
+          "enum": ["read", "write", "admin", "privileged"],
+          "description": "Scope of access granted to this identity."
+        },
+        "mfa_enforced": {
+          "type": "boolean",
+          "description": "Whether MFA is required for this identity. False for service accounts where MFA is not applicable."
+        },
+        "pam_controlled": {
+          "type": "boolean",
+          "description": "Whether this identity is managed through PAM tooling (e.g., HashiCorp Vault, CyberArk)."
+        },
+        "classification": {
+          "type": "string",
+          "enum": ["none", "public", "internal", "proprietary", "confidential", "secret"]
+        },
+        "data_sensitivity": {
+          "type": "array",
+          "description": "Categories of sensitive data this identity is authorized to access.",
+          "items": {
+            "type": "string",
+            "enum": ["pii", "spii", "phi", "pci"]
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "planned", "decommissioning", "decommissioned", "deprecated"]
+        },
+        "temporal_state": {
+          "type": "string",
+          "enum": ["baseline", "transition", "target"]
+        },
+        "target_resolution": {
+          "type": "string",
+          "format": "date",
+          "description": "Target date for decommissioning or remediation of this identity artifact."
+        },
+        "prism_ea_stakeholder": {
+          "type": "string",
+          "description": "Soft reference to a PRISM EA stakeholder ID (P layer)."
+        },
+        "prism_ea_system": {
+          "type": "string",
+          "description": "Soft reference to a PRISM EA system ID (R layer). Use for service accounts tied to a specific system."
+        },
+        "depends_on": {
+          "type": "array",
+          "description": "IDs of artifacts this identity depends on (e.g., a PAM control managing it).",
+          "items": { "type": "string" }
+        },
+        "compliance_frameworks": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/compliance_framework_item" }
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "links": {
+          "type": "object",
+          "description": "Cross-framework links (soft references, not schema-enforced).",
+          "additionalProperties": { "type": "string" }
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  },
+  "properties": {
+    "dimension": { "const": "identity" },
+    "as_of": {
+      "type": "string",
+      "format": "date",
+      "description": "Date this dimension file accurately reflected the identity landscape."
+    },
+    "temporal_state": {
+      "type": "string",
+      "enum": ["baseline", "transition", "target"]
+    },
+    "iam_roles": {
+      "type": "array",
+      "description": "IAM roles: AWS IAM roles, Azure AD roles, GCP service account roles, Okta groups.",
+      "items": { "$ref": "#/definitions/identity_base" }
+    },
+    "service_accounts": {
+      "type": "array",
+      "description": "Non-human identities: CI/CD service accounts, workload identities, application service users.",
+      "items": { "$ref": "#/definitions/identity_base" }
+    },
+    "external_identities": {
+      "type": "array",
+      "description": "Third-party or partner identities with system access.",
+      "items": { "$ref": "#/definitions/identity_base" }
+    },
+    "privileged_access": {
+      "type": "array",
+      "description": "Privileged accounts: local admin, break-glass access, root credentials.",
+      "items": { "$ref": "#/definitions/identity_base" }
+    },
+    "federations": {
+      "type": "array",
+      "description": "Federated identity configurations: SAML IdPs, OIDC providers, SSO integrations.",
+      "items": { "$ref": "#/definitions/identity_base" }
+    }
+  }
+}

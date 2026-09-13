@@ -1,0 +1,137 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-d/platforms",
+  "title": "PRISM/D — P: Platforms",
+  "description": "Where data lives: lakes, warehouses, feature stores, stream platforms, caches, and lakehouses.",
+  "type": "object",
+  "required": ["prism_d"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_d": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "platforms" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "data_lakes": {
+      "type": "array",
+      "description": "Object-based raw storage platforms. Store data at any scale in native format before transformation.",
+      "items": { "$ref": "#/definitions/platform_base" }
+    },
+    "data_warehouses": {
+      "type": "array",
+      "description": "Columnar analytical stores optimized for query and reporting workloads.",
+      "items": { "$ref": "#/definitions/platform_base" }
+    },
+    "feature_stores": {
+      "type": "array",
+      "description": "ML feature serving and storage platforms with online (low-latency) and offline (training) paths.",
+      "items": { "$ref": "#/definitions/platform_base" }
+    },
+    "stream_platforms": {
+      "type": "array",
+      "description": "Event streaming infrastructure (Kafka, Kinesis, Pub/Sub). Provides durable, ordered event logs.",
+      "items": { "$ref": "#/definitions/platform_base" }
+    },
+    "data_caches": {
+      "type": "array",
+      "description": "Low-latency serving layers for frequently accessed data (Redis, Memcached, DynamoDB DAX).",
+      "items": { "$ref": "#/definitions/platform_base" }
+    },
+    "lakehouses": {
+      "type": "array",
+      "description": "Unified lake + warehouse platforms combining open table formats with ACID transactions (Delta Lake, Iceberg, Hudi).",
+      "items": { "$ref": "#/definitions/platform_base" }
+    },
+    "definitions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "platform_base": { "type": "object" }
+      }
+    }
+  },
+  "definitions": {
+    "platform_base": {
+      "type": "object",
+      "required": ["id", "name", "technology", "platform_type", "deployment", "managed_by", "data_classification_max"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "technology": {
+          "type": "string",
+          "description": "The specific technology stack (e.g. 'AWS S3 + Delta Lake', 'Snowflake', 'Confluent Kafka')."
+        },
+        "platform_type": {
+          "type": "string",
+          "enum": ["lake", "warehouse", "lakehouse", "feature_store", "stream", "cache"]
+        },
+        "deployment": {
+          "type": "string",
+          "enum": ["cloud", "on-prem", "hybrid", "managed-saas"],
+          "description": "How the platform is deployed and operated."
+        },
+        "managed_by": {
+          "type": "string",
+          "description": "Team responsible for operating this platform."
+        },
+        "data_classification_max": {
+          "type": "string",
+          "enum": ["public", "internal", "confidential", "restricted"],
+          "description": "Maximum data classification this platform is approved to store."
+        },
+        "compliance_scope": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Compliance frameworks this platform has been assessed or certified against."
+        },
+        "compliance_frameworks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["framework"],
+            "additionalProperties": false,
+            "properties": {
+              "framework": { "type": "string" },
+              "scope": { "type": "string" },
+              "status": {
+                "type": "string",
+                "enum": ["applicable", "certified", "in-progress", "exempt"]
+              },
+              "certification_date": { "type": "string", "format": "date" }
+            }
+          }
+        },
+        "region": {
+          "type": "string",
+          "description": "Primary region or multi-region configuration."
+        },
+        "sla_availability": {
+          "type": "string",
+          "description": "Availability SLA (e.g. '99.9%', '99.99%')."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "planned", "deprecated", "retired"]
+        },
+        "temporal_state": {
+          "type": "string",
+          "enum": ["baseline", "transition", "target"]
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

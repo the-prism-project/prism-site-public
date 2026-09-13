@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-a/components",
+  "title": "PRISM/A — C: Components",
+  "description": "Services, UIs, workers, AI models, adapters, and platforms within domains. One file per domain or landscape.",
+  "type": "object",
+  "required": ["prism_a"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_a": {
+      "type": "object",
+      "required": ["dimension", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "dimension": { "const": "components" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "components": {
+      "type": "array",
+      "description": "All deployable or logical units within the application landscape.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "artifact_type", "domain_id"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stable identifier. Prefix convention: 'comp-'."
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable component name."
+          },
+          "artifact_type": {
+            "type": "string",
+            "enum": ["service", "ui", "worker", "ai_model", "adapter", "platform"],
+            "description": "Component type. service = long-running workload; ui = client interface; worker = background job; ai_model = ML/LLM/agentic system; adapter = anti-corruption layer or external facade; platform = vendor-managed SaaS."
+          },
+          "domain_id": {
+            "type": "string",
+            "description": "The domain this component belongs to. Required — every component must be owned by a domain."
+          },
+          "description": {
+            "type": "string",
+            "description": "What this component does and its role in the domain."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "decommissioning", "decommissioned", "deprecated"],
+            "description": "Operational lifecycle status."
+          },
+          "tech_stack": {
+            "type": "array",
+            "description": "Key technologies, languages, frameworks, and runtimes.",
+            "items": { "type": "string" }
+          },
+          "system_type": {
+            "type": "string",
+            "enum": ["ai-agent", "llm", "agentic-workflow"],
+            "description": "AI/ML specialization. Only relevant for artifact_type: ai_model."
+          },
+          "trigger_mode": {
+            "type": "string",
+            "enum": ["event-driven", "api-driven", "scheduled", "continuous", "manual"],
+            "description": "How this component is invoked or activated."
+          },
+          "data_sensitivity": {
+            "type": "array",
+            "description": "Data sensitivity categories handled by this component.",
+            "items": {
+              "type": "string",
+              "enum": ["pii", "spii", "phi", "pci"]
+            },
+            "uniqueItems": true
+          },
+          "compliance_frameworks": {
+            "type": "array",
+            "description": "Compliance frameworks this component must satisfy.",
+            "items": { "type": "string" }
+          },
+          "prism_ea_system": {
+            "type": "string",
+            "description": "Cross-reference to the PRISM EA Reality layer system ID that corresponds to this component."
+          },
+          "prism_i_artifact": {
+            "type": "string",
+            "description": "Cross-reference to a PRISM Intent artifact (goal, driver, or constraint) that motivates this component."
+          },
+          "depends_on": {
+            "type": "array",
+            "description": "Component IDs this component depends on. Used for blast radius analysis.",
+            "items": { "type": "string" }
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

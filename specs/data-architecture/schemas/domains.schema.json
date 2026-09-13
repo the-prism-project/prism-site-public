@@ -1,0 +1,226 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-d/domains",
+  "title": "PRISM/D — D: Domains",
+  "description": "Data ownership contexts: bounded data domains, versioned data products, and raw or intermediate datasets.",
+  "type": "object",
+  "required": ["prism_d"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_d": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "domains" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "data_domains": {
+      "type": "array",
+      "description": "Bounded data ownership contexts. A domain owns one or more datasets and is accountable for their quality, contracts, and compliance.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "owner", "domain_type", "data_classification"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "owner": {
+            "type": "string",
+            "description": "Team or individual accountable for this domain."
+          },
+          "domain_type": {
+            "type": "string",
+            "enum": ["source", "derived", "aggregate", "event"],
+            "description": "source — raw operational data; derived — transformed from source; aggregate — merged from multiple domains; event — event-stream originated."
+          },
+          "data_classification": {
+            "type": "string",
+            "enum": ["public", "internal", "confidential", "restricted"],
+            "description": "Highest sensitivity classification of data within this domain."
+          },
+          "data_sensitivity": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["pii", "spii", "phi", "pci"]
+            },
+            "description": "Specific sensitivity categories present in this domain."
+          },
+          "compliance_frameworks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["framework"],
+              "additionalProperties": false,
+              "properties": {
+                "framework": { "type": "string" },
+                "scope": { "type": "string" },
+                "status": {
+                  "type": "string",
+                  "enum": ["applicable", "certified", "in-progress", "exempt"]
+                }
+              }
+            }
+          },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "IDs of upstream domains this domain derives data from."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "deprecated", "retired"]
+          },
+          "maturity": {
+            "type": "string",
+            "enum": ["initial", "developing", "defined", "managed", "optimizing"],
+            "description": "Data governance maturity of this domain (ownership clarity, contract discipline, quality controls), independent of status."
+          },
+          "temporal_state": {
+            "type": "string",
+            "enum": ["baseline", "transition", "target"]
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "data_products": {
+      "type": "array",
+      "description": "Versioned datasets served to external consumers. A data product has an explicit contract, SLA, and owner.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "owner", "data_classification"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "owner": { "type": "string" },
+          "version": {
+            "type": "string",
+            "description": "Current published version (semver or date-based)."
+          },
+          "data_classification": {
+            "type": "string",
+            "enum": ["public", "internal", "confidential", "restricted"]
+          },
+          "data_sensitivity": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["pii", "spii", "phi", "pci"]
+            }
+          },
+          "domain_id": {
+            "type": "string",
+            "description": "The data domain that owns and produces this product."
+          },
+          "consumers": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Teams or systems consuming this data product."
+          },
+          "contract_id": {
+            "type": "string",
+            "description": "Reference to the data contract governing this product."
+          },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "deprecated", "retired"]
+          },
+          "temporal_state": {
+            "type": "string",
+            "enum": ["baseline", "transition", "target"]
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "datasets": {
+      "type": "array",
+      "description": "Raw or intermediate datasets owned by a domain. Not yet productized.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "owner", "data_classification"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "owner": { "type": "string" },
+          "domain_id": { "type": "string" },
+          "data_classification": {
+            "type": "string",
+            "enum": ["public", "internal", "confidential", "restricted"]
+          },
+          "data_sensitivity": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["pii", "spii", "phi", "pci"]
+            }
+          },
+          "format": {
+            "type": "string",
+            "description": "Physical format (e.g. parquet, delta, csv, json)."
+          },
+          "platform_id": {
+            "type": "string",
+            "description": "Reference to the platform where this dataset is stored."
+          },
+          "compliance_frameworks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["framework"],
+              "additionalProperties": false,
+              "properties": {
+                "framework": { "type": "string" },
+                "scope": { "type": "string" },
+                "status": {
+                  "type": "string",
+                  "enum": ["applicable", "certified", "in-progress", "exempt"]
+                }
+              }
+            }
+          },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "deprecated", "retired"]
+          },
+          "temporal_state": {
+            "type": "string",
+            "enum": ["baseline", "transition", "target"]
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-ai/observability",
+  "title": "PRISM/AI — O: Observability",
+  "description": "Production metrics, drift detectors, alert rules, AI incidents, and trace configurations for monitoring AI model and system behavior in production.",
+  "type": "object",
+  "required": ["prism", "observability"],
+  "additionalProperties": false,
+  "properties": {
+    "prism": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "observability" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "observability": {
+      "type": "array",
+      "description": "Observability artifacts tracking production health of AI models and systems.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "type", "signal_type", "threshold", "aggregation", "depends_on"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "description": "Unique identifier for this observability artifact." },
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["eval_metric", "drift_detector", "alert_rule", "ai_incident", "trace_config"],
+            "description": "What kind of observability artifact this is."
+          },
+          "signal_type": {
+            "type": "string",
+            "enum": ["accuracy", "latency", "cost", "drift", "override-rate", "hallucination-rate", "toxicity", "confidence"],
+            "description": "The AI-specific signal this artifact measures or responds to."
+          },
+          "threshold": {
+            "description": "The value at which an alert fires or an incident is declared.",
+            "oneOf": [
+              { "type": "string" },
+              { "type": "number" }
+            ]
+          },
+          "aggregation": {
+            "type": "string",
+            "enum": ["real-time", "hourly", "daily", "weekly", "per-batch"],
+            "description": "How signal data is aggregated before evaluation."
+          },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "IDs of model, system, or eval suite artifacts this observability artifact monitors.",
+            "minItems": 1
+          },
+          "current_value": {
+            "description": "Most recently observed value of this signal.",
+            "oneOf": [
+              { "type": "string" },
+              { "type": "number" }
+            ]
+          },
+          "linked_guardrail": {
+            "type": "string",
+            "description": "ID of the trust guardrail that this metric feeds or enforces."
+          },
+          "description": { "type": "string" },
+          "owner_team": { "type": "string" },
+          "resolution": {
+            "type": "string",
+            "description": "For ai_incident: description of how the incident was resolved."
+          },
+          "incident_date": {
+            "type": "string",
+            "format": "date",
+            "description": "For ai_incident: date the incident occurred."
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

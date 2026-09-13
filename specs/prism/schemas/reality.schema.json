@@ -1,0 +1,281 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/reality",
+  "title": "PRISM — R: Reality",
+  "description": "Describes what the enterprise actually has and does — capabilities, systems, data assets, and processes.",
+  "type": "object",
+  "required": ["prism"],
+  "additionalProperties": false,
+  "definitions": {
+    "depends_on_item": {
+      "type": "object",
+      "required": ["id", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "description": "ID of the artifact this depends on." },
+        "type": {
+          "type": "string",
+          "enum": ["system", "capability", "process", "data-asset", "api", "event"],
+          "description": "Type of artifact referenced. Used for blast radius analysis."
+        }
+      }
+    },
+    "compliance_framework_item": {
+      "type": "object",
+      "required": ["framework"],
+      "additionalProperties": false,
+      "properties": {
+        "framework": {
+          "type": "string",
+          "enum": ["GDPR", "CCPA", "PDPA", "DPDP", "PCI-DSS", "SOC2", "ISO-27001", "NIST-CSF", "HIPAA", "SOX", "FedRAMP", "LGPD", "PIPEDA", "POPIA", "other"],
+          "description": "Compliance framework identifier. Multiple can apply simultaneously."
+        },
+        "scope": { "type": "string", "description": "Which articles, controls, or aspects of this framework apply to this artifact." },
+        "status": {
+          "type": "string",
+          "enum": ["applicable", "certified", "in-progress", "exempt"],
+          "description": "Compliance status: applicable (must comply), certified (audited and confirmed), in-progress (working toward compliance), exempt (documented exception)."
+        },
+        "certification_date": { "type": "string", "format": "date", "description": "Date certification or audit was completed." },
+        "notes": { "type": "string" }
+      }
+    }
+  },
+  "properties": {
+    "prism": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "reality" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "What the enterprise can do, expressed as business outcomes. Capabilities are independent of how they're delivered.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string", "description": "Capability name as a noun phrase (e.g., 'Claims Processing', 'Patient Discharge Management')." },
+          "kind": {
+            "type": "string",
+            "enum": ["capability", "process", "system", "function", "ai-agent"],
+            "description": "Semantic kind of this artifact. Use when a capability closely represents a process, system, function, or AI agent. 'ai-agent' = capability delivered by an autonomous AI agent. Defaults to 'capability'."
+          },
+          "description": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "decommissioning", "decommissioned", "planned", "deprecated"],
+            "description": "Lifecycle status. 'decommissioning' = transition in progress. 'decommissioned' = retired but recorded for traceability."
+          },
+          "maturity": {
+            "type": "string",
+            "enum": ["initial", "developing", "defined", "managed", "optimizing"],
+            "description": "Capability maturity level."
+          },
+          "classification": {
+            "type": "string",
+            "enum": ["none", "public", "internal", "proprietary", "confidential", "secret"],
+            "description": "Information sensitivity classification for this capability."
+          },
+          "owner_stakeholder_id": { "type": "string" },
+          "system_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "References to system IDs that deliver this capability."
+          },
+          "parent_id": { "type": "string", "description": "Parent capability for hierarchical decomposition." },
+          "depends_on": {
+            "type": "array",
+            "description": "Artifacts this capability depends on. Used for blast radius analysis — when a dependency is decommissioned or changed, all dependent capabilities are flagged.",
+            "items": { "$ref": "#/definitions/depends_on_item" }
+          },
+          "compliance_frameworks": {
+            "type": "array",
+            "description": "Compliance frameworks applicable to this capability. Multiple can apply simultaneously.",
+            "items": { "$ref": "#/definitions/compliance_framework_item" }
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Free-form tags for filtering, indexing, and tooling (e.g., 'customer-facing', 'core', 'legacy')."
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "systems": {
+      "type": "array",
+      "description": "Operational units delivering capabilities — applications, machines, services, teams, or physical systems.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "type"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["application", "platform", "service", "infrastructure", "physical-machine", "team", "manual-process", "data-store", "external-system", "ai-agent", "llm", "agentic-workflow"],
+            "description": "Classification of the system. 'team' and 'manual-process' support non-IT domains. 'ai-agent' = an autonomous AI system acting on behalf of a role. 'llm' = a large language model serving inference. 'agentic-workflow' = an orchestrated multi-agent pipeline."
+          },
+          "description": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "decommissioning", "decommissioned", "planned", "deprecated", "legacy"],
+            "description": "Operational status. 'decommissioning' = transition in progress. 'decommissioned' = retired, recorded for blast radius and audit traceability."
+          },
+          "classification": {
+            "type": "string",
+            "enum": ["none", "public", "internal", "proprietary", "confidential", "secret"],
+            "description": "Information sensitivity classification for this system."
+          },
+          "environment": {
+            "type": "string",
+            "description": "Primary environment this system runs in (e.g., 'prod', 'staging'). Reference an environment ID from the people-place layer."
+          },
+          "owner_stakeholder_id": { "type": "string" },
+          "geography_ids": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "environment_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "References to environment IDs from the people-place layer where this system is deployed."
+          },
+          "technology_stack": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Key technologies, platforms, or standards (e.g., 'Java 21', 'PostgreSQL 16', 'ISO 13485')."
+          },
+          "integration_mode": {
+            "type": "string",
+            "enum": ["embedded", "handoff", "deep-link", "api", "event", "batch"],
+            "description": "How this system integrates with others: embedded (in-process coupling), handoff (transfers ownership to another system), deep-link (UI-level cross-system linking), api (synchronous interface), event (async messaging), batch (scheduled data transfer)."
+          },
+          "trigger_mode": {
+            "type": "string",
+            "enum": ["manual", "scheduled", "event-driven", "api-driven", "continuous", "real-time"],
+            "description": "How this system is initiated: manual (human triggers execution), scheduled (time-based cron/job), event-driven (triggered by an event or message), api-driven (triggered by an API call), continuous (always running, no discrete trigger), real-time (streaming, sub-second response). Useful for identifying automation opportunities."
+          },
+          "depends_on": {
+            "type": "array",
+            "description": "Artifacts this system depends on. Used for blast radius analysis — when a dependency is decommissioned or changed, all dependent systems are flagged.",
+            "items": { "$ref": "#/definitions/depends_on_item" }
+          },
+          "compliance_frameworks": {
+            "type": "array",
+            "description": "Compliance frameworks applicable to this system. Multiple can apply simultaneously.",
+            "items": { "$ref": "#/definitions/compliance_framework_item" }
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Free-form tags for filtering, indexing, and tooling."
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "data_assets": {
+      "type": "array",
+      "description": "Core information assets, their owners, classifications, and roles in the enterprise.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "classification"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "classification": {
+            "type": "string",
+            "enum": ["none", "public", "internal", "proprietary", "confidential", "secret", "restricted", "regulated"],
+            "description": "Data sensitivity classification. none = no sensitivity. public = freely shareable. internal = internal use only. proprietary = competitive or IP-sensitive. confidential = limited distribution. secret = highest sensitivity, strictest controls. restricted = access-controlled subset. regulated = subject to regulatory framework (use compliance_frameworks to specify which)."
+          },
+          "description": { "type": "string" },
+          "owner_stakeholder_id": { "type": "string" },
+          "system_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Systems that store or process this data asset."
+          },
+          "regulatory_constraints": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Free-text list of applicable regulatory constraints (e.g., 'GDPR Art. 9', 'HIPAA PHI'). Use compliance_frameworks for structured capture."
+          },
+          "compliance_frameworks": {
+            "type": "array",
+            "description": "Structured compliance framework coverage for this data asset. Multiple can apply simultaneously.",
+            "items": { "$ref": "#/definitions/compliance_framework_item" }
+          },
+          "depends_on": {
+            "type": "array",
+            "description": "Artifacts this data asset depends on. Used for blast radius analysis.",
+            "items": { "$ref": "#/definitions/depends_on_item" }
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Free-form tags for filtering, indexing, and tooling."
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "processes": {
+      "type": "array",
+      "description": "How work moves through the enterprise — workflows, procedures, value streams.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["operational", "support", "management", "governance", "value-stream"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "decommissioning", "decommissioned", "planned", "deprecated"],
+            "description": "Lifecycle status of this process."
+          },
+          "execution_mode": {
+            "type": "string",
+            "enum": ["manual", "automatic", "semi-automatic"],
+            "description": "How this process is executed: manual (human-driven, no system automation), automatic (fully system-driven without human intervention), semi-automatic (human initiates or approves but system executes steps). Flag manual processes to identify automation candidates."
+          },
+          "trigger": { "type": "string", "description": "What initiates this process." },
+          "outcome": { "type": "string", "description": "What a successful execution produces." },
+          "owner_stakeholder_id": { "type": "string" },
+          "system_ids": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "depends_on": {
+            "type": "array",
+            "description": "Artifacts this process depends on. Used for blast radius analysis.",
+            "items": { "$ref": "#/definitions/depends_on_item" }
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Free-form tags for filtering, indexing, and tooling."
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

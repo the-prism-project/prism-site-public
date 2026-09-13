@@ -1,0 +1,159 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-d/governance",
+  "title": "PRISM/D — G: Governance",
+  "description": "Who accesses what under what rules: PII registers, access policies, retention rules, lineage maps, and compliance controls.",
+  "type": "object",
+  "required": ["prism_d"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_d": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "governance" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "pii_registers": {
+      "type": "array",
+      "description": "Inventory of PII fields across the data landscape. Maps field-level sensitivity to owning datasets and applicable regulations.",
+      "items": { "$ref": "#/definitions/governance_artifact" }
+    },
+    "spii_registers": {
+      "type": "array",
+      "description": "Inventory of SPII, PHI, and PCI fields. Higher-sensitivity counterpart to pii_registers — these require stricter access and handling controls.",
+      "items": { "$ref": "#/definitions/governance_artifact" }
+    },
+    "access_policies": {
+      "type": "array",
+      "description": "Who can access which datasets, under what conditions, with what controls.",
+      "items": { "$ref": "#/definitions/governance_artifact" }
+    },
+    "retention_rules": {
+      "type": "array",
+      "description": "How long data is retained before deletion or archival, and under which regulation.",
+      "items": { "$ref": "#/definitions/governance_artifact" }
+    },
+    "lineage_maps": {
+      "type": "array",
+      "description": "End-to-end data lineage from source to consumption. Captures flow dependencies for audit, impact analysis, and compliance evidence.",
+      "items": { "$ref": "#/definitions/governance_artifact" }
+    },
+    "compliance_controls": {
+      "type": "array",
+      "description": "Specific compliance obligations mapped to controls: BAAs, DPIAs, consent records, audit trails.",
+      "items": { "$ref": "#/definitions/governance_artifact" }
+    }
+  },
+  "definitions": {
+    "governance_artifact": {
+      "type": "object",
+      "required": ["id", "name", "data_classification"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "data_classification": {
+          "type": "string",
+          "enum": ["public", "internal", "confidential", "restricted"]
+        },
+        "data_sensitivity": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["pii", "spii", "phi", "pci"]
+          }
+        },
+        "legal_basis": {
+          "type": "string",
+          "enum": ["consent", "legitimate-interest", "legal-obligation", "contract"],
+          "description": "GDPR legal basis for processing. Required for any artifact covering EU personal data."
+        },
+        "regulation": {
+          "type": "string",
+          "enum": ["GDPR", "CCPA", "HIPAA", "SOX", "PCI-DSS", "APRA", "state-law"],
+          "description": "Primary regulation driving this governance artifact. Use compliance_frameworks for multi-regulation coverage."
+        },
+        "compliance_frameworks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["framework"],
+            "additionalProperties": false,
+            "properties": {
+              "framework": { "type": "string" },
+              "scope": { "type": "string" },
+              "status": {
+                "type": "string",
+                "enum": ["applicable", "certified", "in-progress", "exempt"]
+              }
+            }
+          }
+        },
+        "retention_period": {
+          "type": "string",
+          "description": "How long data must be retained (e.g. '7 years', '90 days', 'indefinite')."
+        },
+        "deletion_method": {
+          "type": "string",
+          "enum": ["hard-delete", "soft-delete", "anonymization", "pseudonymization", "archival"],
+          "description": "How data is disposed of at retention period end."
+        },
+        "audit_required": {
+          "type": "boolean",
+          "description": "Whether access and modifications to this data must be logged for audit purposes."
+        },
+        "owner": {
+          "type": "string",
+          "description": "Team or role accountable for this governance artifact (e.g. 'Data Privacy Office', 'CISO')."
+        },
+        "applies_to": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "IDs of domains, datasets, flows, or platforms this artifact governs."
+        },
+        "depends_on": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "For lineage maps: IDs of upstream artifacts in the data lineage chain."
+        },
+        "access_roles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["role", "permission"],
+            "additionalProperties": false,
+            "properties": {
+              "role": { "type": "string" },
+              "permission": {
+                "type": "string",
+                "enum": ["read", "write", "admin", "none"]
+              },
+              "conditions": { "type": "string" }
+            }
+          },
+          "description": "For access_policies: role-based access rules."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "planned", "deprecated", "retired"]
+        },
+        "temporal_state": {
+          "type": "string",
+          "enum": ["baseline", "transition", "target"]
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

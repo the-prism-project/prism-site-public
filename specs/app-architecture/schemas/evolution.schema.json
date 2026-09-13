@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-a/evolution",
+  "title": "PRISM/A — E: Evolution",
+  "description": "Architectural decisions (ADRs), migration programs, roadmap items, and deprecations.",
+  "type": "object",
+  "required": ["prism_a"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_a": {
+      "type": "object",
+      "required": ["dimension", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "dimension": { "const": "evolution" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "evolution": {
+      "type": "array",
+      "description": "The change record for the application architecture — decisions made, programs in flight, planned capabilities, and things being retired.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "artifact_type", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stable identifier. Prefix conventions: 'adr-' for decisions, 'evo-' for migrations and roadmap items, 'dep-' for deprecations."
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable name for this evolution artifact."
+          },
+          "artifact_type": {
+            "type": "string",
+            "enum": ["decision", "migration_program", "roadmap_item", "deprecation"],
+            "description": "Evolution artifact kind. decision = ADR; migration_program = planned source-to-target migration; roadmap_item = planned new capability; deprecation = retirement notice for a component or integration."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "completed", "cancelled"],
+            "description": "Lifecycle status. active = in progress or enforced; planned = approved but not started; completed = done; cancelled = abandoned."
+          },
+          "description": {
+            "type": "string",
+            "description": "What this evolution artifact describes — rationale, scope, or retirement reason."
+          },
+          "decision_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date the decision was made or ratified. Relevant for artifact_type: decision."
+          },
+          "git_commit_sha": {
+            "type": "string",
+            "description": "Git commit SHA where the ADR was recorded. Links the decision to source history."
+          },
+          "target_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Target completion or sunset date."
+          },
+          "replaces": {
+            "type": "array",
+            "description": "Artifact IDs (components, integrations, or decisions) that this artifact supersedes or replaces.",
+            "items": { "type": "string" }
+          },
+          "superseded_by": {
+            "type": "string",
+            "description": "ID of the artifact that supersedes this one. Set when a decision or component is replaced by a newer one."
+          },
+          "depends_on": {
+            "type": "array",
+            "description": "Component or integration IDs that this evolution artifact acts upon. Used for blast radius analysis.",
+            "items": { "type": "string" }
+          },
+          "owner_stakeholder_id": {
+            "type": "string",
+            "description": "Stakeholder responsible for driving this evolution artifact to completion."
+          },
+          "context": {
+            "type": "string",
+            "description": "Background context — what problem or opportunity triggered this. Required for ADRs."
+          },
+          "decision": {
+            "type": "string",
+            "description": "The specific choice made. Required for artifact_type: decision."
+          },
+          "consequences": {
+            "type": "string",
+            "description": "Expected outcomes, trade-offs, and side effects of this decision or migration."
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

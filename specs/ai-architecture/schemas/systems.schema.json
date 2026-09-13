@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-ai/systems",
+  "title": "PRISM/AI — S: Systems",
+  "description": "AI-powered applications and services: deployed systems, RAG pipelines, copilots, classifier services, autonomous workflows, and agents.",
+  "type": "object",
+  "required": ["prism", "systems"],
+  "additionalProperties": false,
+  "properties": {
+    "prism": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "systems" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "systems": {
+      "type": "array",
+      "description": "AI system artifacts in this landscape.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "type", "primary_model", "architecture_pattern", "human_in_loop", "failure_mode", "lifecycle_stage", "depends_on"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "description": "Unique identifier for this AI system artifact." },
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["ai_system", "rag_pipeline", "copilot", "classifier_service", "autonomous_workflow", "ai_agent"],
+            "description": "What kind of AI system this is."
+          },
+          "primary_model": {
+            "type": "string",
+            "description": "ID of the primary model artifact this system is built on."
+          },
+          "architecture_pattern": {
+            "type": "string",
+            "enum": ["rag", "zero-shot", "few-shot", "fine-tuned", "agentic", "ensemble", "hybrid"],
+            "description": "The AI architecture pattern this system uses."
+          },
+          "human_in_loop": {
+            "type": "boolean",
+            "description": "Whether a human reviews AI decisions before they take effect."
+          },
+          "failure_mode": {
+            "type": "string",
+            "description": "What happens when this system fails or produces low-confidence output."
+          },
+          "lifecycle_stage": {
+            "type": "string",
+            "enum": ["research", "training", "evaluation", "staging", "production", "deprecated", "retired"],
+            "description": "Current stage in the AI system lifecycle."
+          },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "IDs of model artifacts (and other system artifacts) this system depends on.",
+            "minItems": 1
+          },
+          "description": { "type": "string" },
+          "owner_team": { "type": "string" },
+          "sla": {
+            "type": "string",
+            "description": "Declared SLA for this system (e.g., '99.5% uptime', '<200ms P99')."
+          },
+          "compliance_frameworks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["framework"],
+              "additionalProperties": false,
+              "properties": {
+                "framework": { "type": "string" },
+                "scope": { "type": "string" },
+                "status": {
+                  "type": "string",
+                  "enum": ["applicable", "certified", "in-progress", "exempt"]
+                }
+              }
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

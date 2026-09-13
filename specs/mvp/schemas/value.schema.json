@@ -1,0 +1,98 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-mvp/value",
+  "title": "PRISM/MVP — V: Value",
+  "description": "What problem we're solving: problems, value propositions, differentiators, outcomes.",
+  "type": "object",
+  "required": ["prism"],
+  "additionalProperties": false,
+  "properties": {
+    "prism": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "value" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "problems": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "segment_id", "validation_state"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "segment_id": { "type": "string" },
+          "description": { "type": "string" },
+          "value_type": { "type": "string", "enum": ["gain", "pain_relief", "new_possibility"] },
+          "validation_state": { "type": "string", "enum": ["assumed", "observed", "validated"] },
+          "evidence": { "type": "string" },
+          "alternative": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "value_propositions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "segment_id", "linked_problem", "validation_state"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "segment_id": { "type": "string" },
+          "linked_problem": { "type": "string" },
+          "description": { "type": "string" },
+          "value_type": { "type": "string", "enum": ["gain", "pain_relief", "new_possibility"] },
+          "validation_state": { "type": "string", "enum": ["assumed", "observed", "validated"] },
+          "evidence": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "differentiators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "evidence": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "outcomes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "segment_id"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "segment_id": { "type": "string" },
+          "description": { "type": "string" },
+          "metric": { "type": "string" },
+          "validation_state": { "type": "string", "enum": ["assumed", "observed", "validated"] },
+          "evidence": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

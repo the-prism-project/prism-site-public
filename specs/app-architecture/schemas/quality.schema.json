@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-a/quality",
+  "title": "PRISM/A — Q: Quality",
+  "description": "Quality snapshots, SLOs, and tech debt records for components in the application landscape.",
+  "type": "object",
+  "required": ["prism_a"],
+  "additionalProperties": false,
+  "properties": {
+    "prism_a": {
+      "type": "object",
+      "required": ["dimension", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "dimension": { "const": "quality" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "quality_metrics": {
+      "type": "array",
+      "description": "Point-in-time quality snapshots for components. Capture what's true now, not what's aspirational.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "artifact_type", "component_id"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Stable identifier. Prefix convention: 'qual-'."
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable label for this quality record."
+          },
+          "artifact_type": {
+            "type": "string",
+            "enum": ["quality_metric", "slo", "tech_debt_record"],
+            "description": "Type of quality artifact."
+          },
+          "component_id": {
+            "type": "string",
+            "description": "The component ID (from the C dimension) this quality record describes."
+          },
+          "description": {
+            "type": "string",
+            "description": "Context and observations about this component's quality."
+          },
+          "last_assessed": {
+            "type": "string",
+            "format": "date",
+            "description": "Date this quality data was last verified or updated."
+          },
+          "test_coverage": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Automated test coverage percentage."
+          },
+          "tech_debt_level": {
+            "type": "string",
+            "enum": ["none", "low", "medium", "high", "critical"],
+            "description": "Overall tech debt severity for this component."
+          },
+          "tech_debt_notes": {
+            "type": "string",
+            "description": "Description of specific tech debt items and their root cause."
+          },
+          "tech_debt_resolution": {
+            "type": "string",
+            "description": "Planned approach or linked migration program to resolve the tech debt."
+          },
+          "reliability": {
+            "type": "string",
+            "enum": ["high", "medium", "low"],
+            "description": "Observed reliability of this component in production."
+          },
+          "security_posture": {
+            "type": "string",
+            "enum": ["strong", "moderate", "weak"],
+            "description": "Current security posture based on last assessment or audit."
+          },
+          "slo_target": {
+            "type": "string",
+            "description": "The SLO target value (e.g. '99.9% availability', 'p95 < 200ms'). Required when artifact_type is 'slo'."
+          },
+          "slo_current": {
+            "type": "string",
+            "description": "Current measured value against the SLO target."
+          },
+          "breach_history": {
+            "type": "array",
+            "description": "Historical SLO breaches. Each entry is a date or period description.",
+            "items": {
+              "type": "object",
+              "required": ["date"],
+              "additionalProperties": false,
+              "properties": {
+                "date": { "type": "string", "format": "date" },
+                "description": { "type": "string" },
+                "duration_minutes": { "type": "integer" }
+              }
+            }
+          },
+          "depends_on": {
+            "type": "array",
+            "description": "Component IDs that this quality record also references (e.g. upstream dependencies affecting reliability).",
+            "items": { "type": "string" }
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

@@ -30,8 +30,7 @@ Deploy target: [`prism-site-public/`](../prism-site-public) (built via
 ## Paper
 
 - PDF: [PRISM_Framework_V1.0.pdf](public/PRISM_Framework_V1.0.pdf)
-- SSRN: https://ssrn.com/abstract=7037719
-- Zenodo (DOI): https://doi.org/10.5281/zenodo.21325668
+- SSRN: https://dx.doi.org/10.2139/ssrn.7037719
 
 ## License
 

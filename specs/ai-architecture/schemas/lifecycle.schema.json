@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-ai/lifecycle",
+  "title": "PRISM/AI — L: Lifecycle",
+  "description": "Training runs, evaluation suites, deployments, monitoring jobs, and experiments that govern how AI models move through their lifecycle.",
+  "type": "object",
+  "required": ["prism", "lifecycle"],
+  "additionalProperties": false,
+  "properties": {
+    "prism": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "lifecycle" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "lifecycle": {
+      "type": "array",
+      "description": "Lifecycle artifacts governing AI model training, evaluation, deployment, and monitoring.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "type", "lifecycle_stage", "cadence", "responsible_team", "trigger"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "description": "Unique identifier for this lifecycle artifact." },
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["training_run", "eval_suite", "deployment", "monitoring_job", "experiment"],
+            "description": "What kind of lifecycle activity this is."
+          },
+          "lifecycle_stage": {
+            "type": "string",
+            "description": "Which stage in the AI lifecycle this artifact manages or applies to."
+          },
+          "cadence": {
+            "type": "string",
+            "enum": ["daily", "weekly", "monthly", "per-release", "event-driven"],
+            "description": "How frequently this activity runs."
+          },
+          "responsible_team": {
+            "type": "string",
+            "description": "Team that owns and operates this lifecycle activity."
+          },
+          "trigger": {
+            "type": "string",
+            "enum": ["scheduled", "event-driven", "manual", "drift-triggered"],
+            "description": "What initiates this activity."
+          },
+          "depends_on": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "IDs of model artifacts or eval suite artifacts this activity depends on."
+          },
+          "description": { "type": "string" },
+          "environment": {
+            "type": "string",
+            "description": "Infrastructure environment where this runs (e.g., 'SageMaker', 'Vertex AI', 'on-prem GPU cluster')."
+          },
+          "duration_estimate": {
+            "type": "string",
+            "description": "Typical runtime duration (e.g., '4h', '2d')."
+          },
+          "success_criteria": {
+            "type": "string",
+            "description": "What defines a successful run (e.g., 'eval accuracy >= 87%', 'PSI < 0.2')."
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

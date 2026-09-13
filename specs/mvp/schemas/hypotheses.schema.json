@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-mvp/hypotheses",
+  "title": "PRISM/MVP — H: Hypotheses",
+  "description": "What we believe but haven't proven: assumptions, risks, unknowns.",
+  "type": "object",
+  "required": ["prism"],
+  "additionalProperties": false,
+  "properties": {
+    "prism": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": { "const": "hypotheses" },
+        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "temporal_state": { "type": "string", "enum": ["baseline", "transition", "target"] },
+        "as_of": { "type": "string", "format": "date" },
+        "label": { "type": "string" }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "assumption_type", "risk_level", "validation_state"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "assumption_type": { "type": "string", "enum": ["desirability", "viability", "feasibility", "usability", "ai-behavior"] },
+          "risk_level": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+          "validation_state": { "type": "string", "enum": ["unvalidated", "in-progress", "validated", "invalidated"] },
+          "description": { "type": "string" },
+          "validation_criteria": { "type": "string" },
+          "linked_bet": { "type": "string" },
+          "discovery_date": { "type": "string", "format": "date" },
+          "resolution_date": { "type": "string", "format": "date" },
+          "linked_learning": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "risk_level"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "risk_level": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+          "description": { "type": "string" },
+          "linked_assumption": { "type": "string" },
+          "mitigation": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "unknowns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "investigation_plan": { "type": "string" },
+          "linked_bet": { "type": "string" },
+          "discovery_date": { "type": "string", "format": "date" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

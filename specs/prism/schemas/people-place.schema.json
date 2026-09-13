@@ -1,0 +1,186 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/people-place",
+  "title": "PRISM — P: People & Place",
+  "description": "Defines who is involved in the enterprise and from where they operate. Covers stakeholders, geographies, and operating environments.",
+  "type": "object",
+  "required": ["prism", "stakeholders"],
+  "additionalProperties": false,
+  "properties": {
+    "prism": {
+      "type": "object",
+      "required": ["layer", "schema_version"],
+      "additionalProperties": false,
+      "properties": {
+        "layer": {
+          "const": "people-place",
+          "description": "Must be 'people-place' for this schema."
+        },
+        "schema_version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+$",
+          "description": "PRISM schema version this artifact targets (e.g., '1.1')."
+        },
+        "temporal_state": {
+          "type": "string",
+          "enum": ["baseline", "transition", "target"],
+          "description": "The point-in-time status of this artifact."
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO 8601 date when this artifact reflects reality (baseline) or is targeted (target)."
+        },
+        "label": {
+          "type": "string",
+          "description": "Human-readable label for this artifact, e.g. 'Baseline Q1 2025'."
+        }
+      }
+    },
+    "stakeholders": {
+      "type": "array",
+      "description": "Roles, personas, organizational units, and external parties involved in the enterprise.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "role", "type"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for this stakeholder (slug format recommended, e.g. 'cto', 'end-user-emea')."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name for this stakeholder."
+          },
+          "role": {
+            "type": "string",
+            "description": "Functional role or title (e.g., 'Chief Technology Officer', 'Clinical Nurse', 'Line Operator')."
+          },
+          "type": {
+            "type": "string",
+            "enum": ["internal", "external", "regulator", "partner", "customer", "supplier"],
+            "description": "Classification of the stakeholder's relationship to the enterprise."
+          },
+          "org_unit": {
+            "type": "string",
+            "description": "Organizational unit, department, or team this stakeholder belongs to."
+          },
+          "geography_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "References to geography IDs where this stakeholder operates."
+          },
+          "concerns": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Key architectural concerns this stakeholder holds (e.g., 'uptime', 'data privacy', 'cost')."
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Free-form tags for filtering, indexing, and tooling (e.g., 'executive', 'data-owner', 'external-regulator')."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Free-text notes about this stakeholder's context or influence."
+          }
+        }
+      }
+    },
+    "geographies": {
+      "type": "array",
+      "description": "Physical locations, regions, regulatory jurisdictions, cloud regions, and logical environments.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "type"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for this geography (e.g., 'eu-west', 'plant-monterrey', 'aws-us-east-1')."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name for this geography."
+          },
+          "type": {
+            "type": "string",
+            "enum": ["global", "region", "country", "city", "site", "building", "virtual", "cloud-region", "data-center", "availability-zone"],
+            "description": "Geographic granularity. cloud-region, data-center, and availability-zone support cloud and infrastructure topology modeling."
+          },
+          "regulatory_zone": {
+            "type": "string",
+            "description": "Regulatory or legal jurisdiction (e.g., 'GDPR', 'HIPAA', 'FDA 21 CFR Part 11'). For structured compliance coverage use compliance_frameworks on Reality artifacts."
+          },
+          "cloud_provider": {
+            "type": "string",
+            "enum": ["aws", "azure", "gcp", "oracle", "alibaba", "on-premises", "multi-cloud", "other"],
+            "description": "Cloud provider for cloud-region, data-center, and availability-zone type geographies."
+          },
+          "cloud_region_id": {
+            "type": "string",
+            "description": "Provider-specific region or zone identifier (e.g., 'us-east-1', 'eu-west-2', 'eastus', 'ap-southeast-1')."
+          },
+          "parent_id": {
+            "type": "string",
+            "description": "Reference to a parent geography ID to express containment hierarchy (e.g., an availability-zone inside a cloud-region)."
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Free-form tags for filtering, indexing, and tooling (e.g., 'primary', 'dr-site', 'regulated')."
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "environments": {
+      "type": "array",
+      "description": "Operating contexts in which the enterprise runs. Environments are distinct from geographies — the same environment type can exist in multiple locations.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "type"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for this environment (e.g., 'prod', 'uat', 'dr-site-a')."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name for this environment."
+          },
+          "type": {
+            "type": "string",
+            "enum": ["production", "pre-production", "staging", "qa", "development", "testing", "performance", "disaster-recovery", "field", "laboratory", "sandbox"],
+            "description": "Environment classification. 'qa' = quality assurance. 'pre-production' = final gate before production. 'performance' = load and stress testing. Use 'tier' for custom labels beyond this classification."
+          },
+          "tier": {
+            "type": "string",
+            "description": "Free-form tier label for organizations with custom environment naming conventions (e.g., 'tier-1', 'prod-eu', 'uat-2', 'green'). Supplements the type classification."
+          },
+          "geography_id": {
+            "type": "string",
+            "description": "Reference to the geography ID where this environment operates."
+          },
+          "owner_stakeholder_id": {
+            "type": "string",
+            "description": "Reference to the stakeholder ID responsible for this environment."
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Free-form tags for filtering, indexing, and tooling (e.g., 'critical', 'regulated', 'short-lived')."
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

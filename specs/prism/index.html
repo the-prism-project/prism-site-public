@@ -30,6 +30,7 @@
 <body>
 <nav><a href="https://prism-framework.org/">&larr; PRISM</a></nav>
 <p><a href="https://prism-framework.org/specs/prism.md">View raw markdown</a></p>
+<p>Schemas: <a href="https://prism-framework.org/specs/prism/schemas/intent.schema.json">intent.schema.json</a> &middot; <a href="https://prism-framework.org/specs/prism/schemas/movement.schema.json">movement.schema.json</a> &middot; <a href="https://prism-framework.org/specs/prism/schemas/people-place.schema.json">people-place.schema.json</a> &middot; <a href="https://prism-framework.org/specs/prism/schemas/prism.schema.json">prism.schema.json</a> &middot; <a href="https://prism-framework.org/specs/prism/schemas/reality.schema.json">reality.schema.json</a> &middot; <a href="https://prism-framework.org/specs/prism/schemas/signal.schema.json">signal.schema.json</a> &middot; <a href="https://prism-framework.org/specs/prism/schemas/temporal.schema.json">temporal.schema.json</a></p>
 <h1>PRISM Framework — Full Specification</h1>
 <p>Version: 1.0.0
 Status: Draft
@@ -211,7 +212,7 @@ Licence: CC BY-SA 4.0</p>
 <li>Self-documentation through schema descriptions</li>
 <li>Clear contracts for tooling (renderers, dashboards, analyzers)</li>
 </ul>
-<p>Schemas live in <code>schema/</code> and are versioned alongside the framework.</p>
+<p>Schemas live in <code>schemas/</code> and are versioned alongside the framework.</p>
 <h3>2.4 Authorable Landscapes</h3>
 <p>A PRISM landscape is a set of layer files describing one enterprise (or one bounded context within one). It must be authorable by:</p>
 <ul>
@@ -362,12 +363,12 @@ git tag prism/target/2027-q2
   schema_version: &quot;1.0&quot;
 </code></pre>
 <p>Schema validation can run locally:</p>
-<pre><code class="language-bash">ajv validate -s prism/schema/reality.schema.json -d my-enterprise/reality/landscape.yaml
+<pre><code class="language-bash">ajv validate -s prism/schemas/reality.schema.json -d my-enterprise/reality/landscape.yaml
 </code></pre>
 <p>Or in CI:</p>
 <pre><code class="language-yaml"># .github/workflows/prism-validate.yml
 - name: Validate PRISM artifacts
-  run: ajv validate -s prism/schema/*.schema.json -d landscape/**/*.yaml
+  run: ajv validate -s prism/schemas/*.schema.json -d landscape/**/*.yaml
 </code></pre>
 <hr>
 <h2>7. PRISM and Non-IT Domains</h2>
@@ -953,8 +954,7 @@ git tag prism/target/2027-q2
 <ul>
 <li>Site: <a href="https://prism-framework.org/">https://prism-framework.org/</a></li>
 <li>PDF: <a href="https://prism-framework.org/PRISM_Framework_V1.0.pdf">https://prism-framework.org/PRISM_Framework_V1.0.pdf</a></li>
-<li>SSRN: <a href="https://ssrn.com/abstract=7037719">https://ssrn.com/abstract=7037719</a></li>
-<li>Zenodo (DOI): <a href="https://doi.org/10.5281/zenodo.21325668">https://doi.org/10.5281/zenodo.21325668</a></li>
+<li>SSRN: <a href="https://dx.doi.org/10.2139/ssrn.7037719">https://dx.doi.org/10.2139/ssrn.7037719</a></li>
 </ul>
 
 </body>

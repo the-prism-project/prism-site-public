@@ -1,0 +1,133 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://prism-framework.org/schema/1.0/prism-cy/threats",
+  "title": "PRISM/CY — T: Threats",
+  "description": "Describes what is threatening the enterprise — active threat actors, assessed risks, vulnerabilities, EOL risks, AI risks, supply chain risks, and regulatory risks.",
+  "type": "object",
+  "required": ["dimension"],
+  "additionalProperties": false,
+  "definitions": {
+    "compliance_framework_item": {
+      "type": "object",
+      "required": ["framework"],
+      "additionalProperties": false,
+      "properties": {
+        "framework": {
+          "type": "string",
+          "enum": ["GDPR", "SOX", "ISO-27001", "SOC2", "PCI-DSS", "NIST-CSF", "HIPAA", "FedRAMP", "CCPA", "PDPA", "LGPD", "PIPEDA", "POPIA", "other"]
+        },
+        "scope": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["applicable", "certified", "in-progress", "exempt"]
+        },
+        "certification_date": { "type": "string", "format": "date" },
+        "notes": { "type": "string" }
+      }
+    },
+    "threat_base": {
+      "type": "object",
+      "required": ["id", "name", "type", "ownership"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique artifact identifier (kebab-case)."
+        },
+        "name": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["threat", "vulnerability", "risk"]
+        },
+        "ownership": {
+          "type": "string",
+          "enum": ["self", "internal", "external"]
+        },
+        "description": { "type": "string" },
+        "threat_category": {
+          "type": "string",
+          "enum": ["external-actor", "insider", "supply-chain", "regulatory", "ai-risk", "eol-risk", "credential"],
+          "description": "The category of threat."
+        },
+        "likelihood": {
+          "type": "string",
+          "enum": ["critical", "high", "medium", "low"],
+          "description": "Assessed likelihood of exploitation or occurrence."
+        },
+        "impact": {
+          "type": "string",
+          "enum": ["critical", "high", "medium", "low"],
+          "description": "Business impact if this threat materializes."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["active", "planned", "decommissioning", "decommissioned", "deprecated"]
+        },
+        "temporal_state": {
+          "type": "string",
+          "enum": ["baseline", "transition", "target"]
+        },
+        "target_resolution": {
+          "type": "string",
+          "format": "date",
+          "description": "Target date by which this threat should be resolved or closed."
+        },
+        "depends_on": {
+          "type": "array",
+          "description": "IDs of surfaces, identities, or other artifacts this threat exploits or references. Used for blast radius analysis.",
+          "items": { "type": "string" }
+        },
+        "mitigated_by": {
+          "type": "array",
+          "description": "IDs of controls that mitigate this threat.",
+          "items": { "type": "string" }
+        },
+        "classification": {
+          "type": "string",
+          "enum": ["none", "public", "internal", "proprietary", "confidential", "secret"]
+        },
+        "compliance_frameworks": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/compliance_framework_item" }
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "links": {
+          "type": "object",
+          "description": "Cross-framework links (soft references, not schema-enforced).",
+          "additionalProperties": { "type": "string" }
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  },
+  "properties": {
+    "dimension": { "const": "threats" },
+    "as_of": {
+      "type": "string",
+      "format": "date",
+      "description": "Date this dimension file accurately reflected the threat landscape."
+    },
+    "temporal_state": {
+      "type": "string",
+      "enum": ["baseline", "transition", "target"]
+    },
+    "threats": {
+      "type": "array",
+      "description": "Active or assessed threats: APT, insider, supply chain, regulatory, AI risk, EOL risk.",
+      "items": { "$ref": "#/definitions/threat_base" }
+    },
+    "vulnerabilities": {
+      "type": "array",
+      "description": "Known vulnerabilities: CVEs, misconfigurations, architectural weaknesses.",
+      "items": { "$ref": "#/definitions/threat_base" }
+    },
+    "risks": {
+      "type": "array",
+      "description": "Assessed risks combining threat + likelihood + impact into a formal risk record.",
+      "items": { "$ref": "#/definitions/threat_base" }
+    }
+  }
+}
